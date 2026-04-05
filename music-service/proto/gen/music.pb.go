@@ -366,9 +366,9 @@ const file_proto_music_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"&\n" +
 	"\n" +
 	"MusicChunk\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\fR\acontent2\xb4\x01\n" +
-	"\fMusicService\x12:\n" +
-	"\vUploadMusic\x12\x14.music.UploadRequest\x1a\x15.music.UploadResponse\x12.\n" +
+	"\acontent\x18\x01 \x01(\fR\acontent2\xb6\x01\n" +
+	"\fMusicService\x12<\n" +
+	"\vUploadMusic\x12\x14.music.UploadRequest\x1a\x15.music.UploadResponse(\x01\x12.\n" +
 	"\tListMusic\x12\f.music.Empty\x1a\x13.music.ListResponse\x128\n" +
 	"\vStreamMusic\x12\x14.music.StreamRequest\x1a\x11.music.MusicChunk0\x01B\x15Z\x13./proto/gen;musicpbb\x06proto3"
 

@@ -5,7 +5,7 @@ package music;
 option go_package = "./proto/gen;musicpb";
 
 service MusicService {
-    rpc UploadMusic(UploadRequest) returns (UploadResponse);
+    rpc UploadMusic(stream UploadRequest) returns (UploadResponse);
     rpc ListMusic(Empty) returns (ListResponse);
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
 }
