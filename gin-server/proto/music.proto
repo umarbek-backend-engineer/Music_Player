@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package music;
+
+option go_package = "./proto/gen;musicpb";
+
+service MusicService {
+    rpc UploadMusic(stream UploadRequest) returns (UploadResponse);
+    rpc ListMusic(Empty) returns (ListResponse);
+    rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
+}
+
+message Empty {}
+
+message UploadRequest {
+    string filename = 1;
+    bytes content = 2;
+}
+
+message UploadResponse {
+    string id = 1;
+    string filename = 2;
+}
+
+message MusicItem {
+    string id = 1;
+    string filename = 2;
+}
+
+message ListResponse {
+    repeated MusicItem songs = 1;
+}
+
+message StreamRequest {
+    string id = 1;
+}
+
+message MusicChunk {
+    bytes content = 1;
+}

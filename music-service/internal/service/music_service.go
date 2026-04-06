@@ -2,6 +2,7 @@ package service
 
 import (
 	"io"
+	"log"
 	"music-service/internal/config"
 	"music-service/internal/repository"
 	"music-service/pkg/utils"
@@ -24,6 +25,11 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 		}
 	}()
 
+	// ensure upload directory exists
+	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+		os.MkdirAll(uploadDir, os.ModePerm)
+	}
+
 	for {
 		req, err := stream.Recv()
 		if err != nil {
@@ -31,8 +37,8 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 			if err == io.EOF {
 				id, err = repository.UploadMusicDBHandler(
 					stream.Context(),
-					req.Filename,
-					uploadDir+filename,
+					filename,
+					uploadDir+filename+".mp3",
 				)
 				if err != nil {
 					return utils.MapErrors(err)
@@ -44,19 +50,27 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 					Filename: filename,
 				})
 			}
-
+			log.Println(err)
 			return utils.MapErrors(err)
 		}
 
-		if outFile == nil {
-			filename := req.Filename
+		if outFile == nil || outFile.Fd() == 0 {
+			log.Println("file is nil")
+			filename = req.Filename
+			log.Println("Received filename:", filename)
+			if filename == "" {
+				filename = uuid.New().String() // fallback unique name
+				log.Println("Using fallback filename:", filename)
+			}
 
 			// create a file on desk
 			var err error
-			outFile, err = os.Create(uploadDir + filename)
+			outFile, err = os.Create(uploadDir + filename + ".mp3")
 			if err != nil {
-				return utils.MapErrors(err)
+				log.Println("Error creating file:", err)
+				return utils.MapErrors(err)	
 			}
+			log.Println("Created file:", uploadDir+filename)
 		}
 
 		// write current chunk
@@ -66,3 +80,19 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 		}
 	}
 }
+
+// func (s *Server) ListMusic(ctx context.Context, req *pb.Empty) (*pb.ListResponse, error) {
+// 	return &pb.ListResponse{
+// 		Songs: []*pb.MusicItem{
+// 			&pb.MusicItem{
+// 				Id:       "id_123",
+// 				Filename: "Hello",
+// 			}},
+// 	}, nil
+// }
+
+// func (s *Server) StreamMusic(ctx context.Context, req *pb.StreamRequest) (*pb.MusicService_StreamMusicServer, error) {
+// 	return &pb.MusicService_StreamMusicServer{
+
+// 	}, nil
+// }
