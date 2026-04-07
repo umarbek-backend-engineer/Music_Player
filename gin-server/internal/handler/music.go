@@ -1,21 +1,22 @@
 package handler
 
 import (
-	"context"
-	"gin-server/internal/config"
+	"encoding/json"
+	"gin-server/internal/modules"
 	"gin-server/pkg/utils"
-	pb "gin-server/proto/gen"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
+	"github.com/google/uuid"
+	"github.com/streadway/amqp"
 )
 
-func UploadHandler(c *gin.Context) {
+func UploadHandler(c *gin.Context, rabbit *modules.RabbitMQ) {
 
 	var filename string
-	cgf := config.Load()
+	uploadid := uuid.New().String()
 
 	// get the file
 	fileHeader, err := c.FormFile("file")
@@ -25,6 +26,7 @@ func UploadHandler(c *gin.Context) {
 	}
 
 	filename = fileHeader.Filename
+	log.Println(filename)
 
 	// open the file
 	file, err := fileHeader.Open()
@@ -34,24 +36,6 @@ func UploadHandler(c *gin.Context) {
 	}
 	defer file.Close()
 
-	// connect to gRPC
-
-	conn, err := grpc.Dial(cgf.Api_Host+":"+cgf.GRPC_PORT, grpc.WithInsecure())
-	if err != nil {
-		utils.Error(c, "Failed to connect gRPC server", http.StatusInternalServerError, err)
-		return
-	}
-	defer conn.Close()
-	// create service client
-
-	client := pb.NewMusicServiceClient(conn)
-	// get the stream from the client
-
-	stream, err := client.UploadMusic(context.Background())
-	if err != nil {
-		utils.Error(c, "Failed to create stream", http.StatusInternalServerError, err)
-		return
-	}
 	// make buffer for the passing chunks
 	buffer := make([]byte, 1024*32) //32KB chunk
 
@@ -62,29 +46,67 @@ func UploadHandler(c *gin.Context) {
 			break
 		}
 		if err != nil {
-			utils.Error(c, "Failed to read chunk from the recieved file", http.StatusInternalServerError, err)
+			utils.Error(c, "Failed to read file with buffer", http.StatusInternalServerError, err)
 			return
 		}
 
-		// send the read buffer
-		err = stream.Send(&pb.UploadRequest{
-			Filename: filename,
-			Content:  buffer[:n],
-		})
+		msg := modules.MusicChunk{
+			UploadID:  uploadid,
+			FileName:  filename,
+			ChunkData: buffer[:n],
+			EOF:       false,
+		}
+
+		body, err := json.Marshal(msg)
 		if err != nil {
-			utils.Error(c, "Failed to read chunk from the recieved file", http.StatusInternalServerError, err)
+			log.Println(err)
 			return
 		}
+		err = rabbit.Ch.Publish(
+			"",
+			rabbit.Q.Name,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType: "application/json",
+				Body:        body,
+			},
+		)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
 	}
-	// close the stream
-	res, err := stream.CloseAndRecv()
+
+	// send the json to the client
+	msg := modules.MusicChunk{
+		UploadID: uploadid,
+		FileName: filename,
+		EOF:      true,
+	}
+
+	body, err := json.Marshal(msg)
 	if err != nil {
-		utils.Error(c, "Failed to Close and revieve response", http.StatusInternalServerError, err)
+		log.Println(err)
 		return
 	}
-	// send the json to the client
-	c.JSON(200, gin.H{
-		"id":       res.Id,
-		"filename": res.Filename,
-	})
+	err = rabbit.Ch.Publish(
+		"",
+		rabbit.Q.Name,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        body,
+		},
+	)
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	c.JSON(200, msg)
+
 }

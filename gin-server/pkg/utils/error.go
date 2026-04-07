@@ -4,7 +4,7 @@ import "github.com/gin-gonic/gin"
 
 type ErrorResponse struct {
 	Success bool   `json:"success"`
-	Message string `json:"messahe"`
+	Message string `json:"message"`
 	Error   string `json:"error,omitempty"`
 }
 

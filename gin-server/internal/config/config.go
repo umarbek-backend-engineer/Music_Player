@@ -8,9 +8,12 @@ import (
 )
 
 type Config struct {
-	Api_Port  string
-	Api_Host  string
-	GRPC_PORT string
+	Api_Port        string
+	Api_Host        string
+	Rabbit_Port     string
+	Rabbit_User     string
+	Rabbit_Password string
+	Rabbit_Host     string
 }
 
 func Load() *Config {
@@ -21,8 +24,11 @@ func Load() *Config {
 	}
 
 	return &Config{
-		Api_Port:  os.Getenv("API_PORT"),
-		Api_Host:  os.Getenv("API_HOST"),
-		GRPC_PORT: os.Getenv("GRPC_PORT"),
+		Api_Port:        os.Getenv("API_PORT"),
+		Api_Host:        os.Getenv("API_HOST"),
+		Rabbit_Port:     os.Getenv("RABBIT_PORT"),
+		Rabbit_User:     os.Getenv("RABBIT_USER"),
+		Rabbit_Password: os.Getenv("RABBIT_PASSWORD"),
+		Rabbit_Host:     os.Getenv("RABBIT_HOST"),
 	}
 }
