@@ -8,7 +8,9 @@ import (
 )
 
 type Config struct {
-	Api_Port string
+	Api_Port  string
+	Api_Host  string
+	GRPC_PORT string
 }
 
 func Load() *Config {
@@ -19,6 +21,8 @@ func Load() *Config {
 	}
 
 	return &Config{
-		Api_Port: os.Getenv("API_PORT"),
+		Api_Port:  os.Getenv("API_PORT"),
+		Api_Host:  os.Getenv("API_HOST"),
+		GRPC_PORT: os.Getenv("GRPC_PORT"),
 	}
 }
