@@ -8,25 +8,21 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func Connect() (*modules.RabbitMQ, error) {
+func Connect() (*modules.Rabbit, error) {
 	cgf := config.Load()
-
-	// connect to rabbitMQ
-	amqpURL := fmt.Sprintf("amqp://%s:%s@%s:%s", cgf.Rabbit_User, cgf.Rabbit_Password, cgf.Rabbit_Host, cgf.Rabbit_Port)
-	conn, err := amqp.Dial(amqpURL)
+	rabbitURL := fmt.Sprintf("amqp://%s:%s@%s:%s", cgf.Rabbit_User, cgf.Rabbit_Password, cgf.Rabbit_Host, cgf.Rabbit_Port)
+	conn, err := amqp.Dial(rabbitURL)
 	if err != nil {
 		return nil, err
 	}
-	// create service client
 
 	ch, err := conn.Channel()
 	if err != nil {
 		return nil, err
 	}
 
-	// create queue
 	q, err := ch.QueueDeclare(
-		"music_upload",
+		"Music_Chunk",
 		true,
 		false,
 		false,
@@ -37,7 +33,7 @@ func Connect() (*modules.RabbitMQ, error) {
 		return nil, err
 	}
 
-	return &modules.RabbitMQ{
+	return &modules.Rabbit{
 		Conn: conn,
 		Ch:   ch,
 		Q:    q,

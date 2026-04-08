@@ -23,6 +23,14 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
+	// 🟢 START CONSUMER (add this)
+	go func() {
+		err := service.StartConsumer()
+		if err != nil {
+			log.Fatal("ERROR: Consumer failed:", err)
+		}
+	}()
+
 	// loading port from config gile
 	port := fmt.Sprintf(":%s", config.Load().API_Port)
 

@@ -18,6 +18,10 @@ type Config struct {
 	DB_Driver       string
 	StoragePath     string
 	NetworkProtocol string
+	Rabbit_Port     string
+	Rabbit_User     string
+	Rabbit_Password string
+	Rabbit_Host     string
 }
 
 func Load() *Config {
@@ -36,6 +40,10 @@ func Load() *Config {
 		DB_Driver:       os.Getenv("DB_DRIVER"),
 		StoragePath:     os.Getenv("STORAGEPATH"),
 		NetworkProtocol: os.Getenv("NETWORK_PROTOCOL"),
+		Rabbit_Port:     os.Getenv("RABBIT_PORT"),
+		Rabbit_User:     os.Getenv("RABBIT_USER"),
+		Rabbit_Password: os.Getenv("RABBIT_PASSWORD"),
+		Rabbit_Host:     os.Getenv("RABBIT_HOST"),
 	}
 
 }

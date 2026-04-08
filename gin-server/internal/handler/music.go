@@ -1,112 +1,92 @@
 package handler
 
 import (
-	"encoding/json"
 	"gin-server/internal/modules"
 	"gin-server/pkg/utils"
+	musicpb "gin-server/proto/gen"
 	"io"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/streadway/amqp"
+	"google.golang.org/protobuf/proto"
 )
 
-func UploadHandler(c *gin.Context, rabbit *modules.RabbitMQ) {
-
-	var filename string
-	uploadid := uuid.New().String()
+func UploadHandler(c *gin.Context, rb *modules.Rabbit) {
 
 	// get the file
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
-		utils.Error(c, "Failed to recieve the file", http.StatusBadRequest, err)
+		utils.Error(c, "Failed to recieve file", http.StatusBadRequest, err)
 		return
 	}
-
-	filename = fileHeader.Filename
-	log.Println(filename)
-
 	// open the file
 	file, err := fileHeader.Open()
 	if err != nil {
-		utils.Error(c, "Failed to open the file", http.StatusInternalServerError, err)
+		utils.Error(c, "Failed to open file", http.StatusInternalServerError, err)
 		return
 	}
 	defer file.Close()
 
+	// validate the file, check if the size of the file is less than 10mb and if the file is music or not
+	err = utils.FileValidator(fileHeader)
+	if err != nil {
+		utils.Error(c, "Invalid File", http.StatusBadRequest, err)
+		return
+	}
+
+	// defer rb.Conn.Close()
+	// defer rb.Ch.Close()
+
 	// make buffer for the passing chunks
-	buffer := make([]byte, 1024*32) //32KB chunk
-
+	buffer := make([]byte, 1024*32)
 	for {
-		//read the file with the buffer
+		// read the file
 		n, err := file.Read(buffer)
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			utils.Error(c, "Failed to read file with buffer", http.StatusInternalServerError, err)
+		if err != nil && err != io.EOF {
+			utils.Error(c, "Failed to read the file", http.StatusInternalServerError, err)
 			return
 		}
 
-		msg := modules.MusicChunk{
-			UploadID:  uploadid,
-			FileName:  filename,
-			ChunkData: buffer[:n],
-			EOF:       false,
+		// detect the last chunk
+		islast := err == io.EOF
+
+		// create proto buffer chunk
+		chunk := &musicpb.MusicChunk{
+			Filename: fileHeader.Filename,
+			Data:     buffer[:n],
+			IsLast:   islast,
 		}
 
-		body, err := json.Marshal(msg)
+		// marshle the chunk
+		body, err := proto.Marshal(chunk)
 		if err != nil {
-			log.Println(err)
+			utils.Error(c, "Failed to Marshal the proto chunk", http.StatusInternalServerError, err)
 			return
 		}
-		err = rabbit.Ch.Publish(
+		// send the chunk to rabbit
+		err = rb.Ch.Publish(
 			"",
-			rabbit.Q.Name,
+			rb.Q.Name,
 			false,
 			false,
 			amqp.Publishing{
-				ContentType: "application/json",
+				ContentType: "application/x-protobuf",
 				Body:        body,
 			},
 		)
 		if err != nil {
-			log.Println(err)
-			return
+			log.Println("Failed to publish message:", err)
+			continue
 		}
-
+		if islast {
+			break
+		}
 	}
 
 	// send the json to the client
-	msg := modules.MusicChunk{
-		UploadID: uploadid,
-		FileName: filename,
-		EOF:      true,
-	}
-
-	body, err := json.Marshal(msg)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	err = rabbit.Ch.Publish(
-		"",
-		rabbit.Q.Name,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType: "application/json",
-			Body:        body,
-		},
-	)
-
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	c.JSON(200, msg)
-
+	c.JSON(200, gin.H{
+		"Message": "Uploaded successfully",
+	})
 }

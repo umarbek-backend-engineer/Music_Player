@@ -10,17 +10,15 @@ import (
 func main() {
 
 	// connect to rabbit mq
-	rabbit, err := rabbitmq.Connect()
+	rb, err := rabbitmq.Connect()
 	if err != nil {
-		log.Println("Error in connecting to rabbitMQ", err)
+		log.Println("Error in connecting rabbit MQ message broker")
 		return
 	}
-	defer rabbit.Conn.Close()
-	defer rabbit.Ch.Close()
 
 	port := cgf.Load().Api_Port
 
-	r := router.Route(rabbit)
+	r := router.Route(rb)
 
 	r.Run(":" + port)
 }

@@ -5,22 +5,17 @@ package music;
 option go_package = "./proto/gen;musicpb";
 
 service MusicService {
-    rpc UploadMusic(stream UploadRequest) returns (UploadResponse);
     rpc ListMusic(Empty) returns (ListResponse);
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
 }
 
-message Empty {}
-
-message UploadRequest {
+message UploadMusicChunk {
     string filename = 1;
-    bytes content = 2;
+    bytes data = 2;
+    bool is_last = 3;
 }
 
-message UploadResponse {
-    string id = 1;
-    string filename = 2;
-}
+message Empty {}
 
 message MusicItem {
     string id = 1;

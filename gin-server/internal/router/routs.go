@@ -7,12 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Route(rabbit *modules.RabbitMQ) *gin.Engine {
+func Route(rb *modules.Rabbit) *gin.Engine {
 
 	r := gin.Default()
 
-	r.POST("/upload/", func(c *gin.Context) {
-		handler.UploadHandler(c, rabbit)
+	r.POST("/upload/", func(cxt *gin.Context) {
+		handler.UploadHandler(cxt, rb)
 	})
 
 	return r
