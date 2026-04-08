@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	MusicService_ListMusic_FullMethodName   = "/music.MusicService/ListMusic"
+	MusicService_UploadMusic_FullMethodName = "/music.MusicService/UploadMusic"
 	MusicService_StreamMusic_FullMethodName = "/music.MusicService/StreamMusic"
 )
 
@@ -28,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MusicServiceClient interface {
 	ListMusic(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListResponse, error)
+	UploadMusic(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadMusicChunks, UploadMusicResponse], error)
 	StreamMusic(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[MusicChunk], error)
 }
 
@@ -49,9 +51,22 @@ func (c *musicServiceClient) ListMusic(ctx context.Context, in *Empty, opts ...g
 	return out, nil
 }
 
+func (c *musicServiceClient) UploadMusic(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadMusicChunks, UploadMusicResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &MusicService_ServiceDesc.Streams[0], MusicService_UploadMusic_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[UploadMusicChunks, UploadMusicResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type MusicService_UploadMusicClient = grpc.ClientStreamingClient[UploadMusicChunks, UploadMusicResponse]
+
 func (c *musicServiceClient) StreamMusic(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[MusicChunk], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &MusicService_ServiceDesc.Streams[0], MusicService_StreamMusic_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &MusicService_ServiceDesc.Streams[1], MusicService_StreamMusic_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +88,7 @@ type MusicService_StreamMusicClient = grpc.ServerStreamingClient[MusicChunk]
 // for forward compatibility.
 type MusicServiceServer interface {
 	ListMusic(context.Context, *Empty) (*ListResponse, error)
+	UploadMusic(grpc.ClientStreamingServer[UploadMusicChunks, UploadMusicResponse]) error
 	StreamMusic(*StreamRequest, grpc.ServerStreamingServer[MusicChunk]) error
 	mustEmbedUnimplementedMusicServiceServer()
 }
@@ -86,6 +102,9 @@ type UnimplementedMusicServiceServer struct{}
 
 func (UnimplementedMusicServiceServer) ListMusic(context.Context, *Empty) (*ListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMusic not implemented")
+}
+func (UnimplementedMusicServiceServer) UploadMusic(grpc.ClientStreamingServer[UploadMusicChunks, UploadMusicResponse]) error {
+	return status.Error(codes.Unimplemented, "method UploadMusic not implemented")
 }
 func (UnimplementedMusicServiceServer) StreamMusic(*StreamRequest, grpc.ServerStreamingServer[MusicChunk]) error {
 	return status.Error(codes.Unimplemented, "method StreamMusic not implemented")
@@ -129,6 +148,13 @@ func _MusicService_ListMusic_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MusicService_UploadMusic_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(MusicServiceServer).UploadMusic(&grpc.GenericServerStream[UploadMusicChunks, UploadMusicResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type MusicService_UploadMusicServer = grpc.ClientStreamingServer[UploadMusicChunks, UploadMusicResponse]
+
 func _MusicService_StreamMusic_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -153,6 +179,11 @@ var MusicService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadMusic",
+			Handler:       _MusicService_UploadMusic_Handler,
+			ClientStreams: true,
+		},
 		{
 			StreamName:    "StreamMusic",
 			Handler:       _MusicService_StreamMusic_Handler,

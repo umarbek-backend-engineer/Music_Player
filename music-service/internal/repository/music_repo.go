@@ -3,7 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"music-service/internal/repository/db_connect.go"
+	"music-service/internal/model"
+	"music-service/internal/repository/db_connect"
 	pb "music-service/proto/gen"
 )
 
@@ -15,7 +16,7 @@ func UploadMusicDBHandler(ctx context.Context, filename, filepath string) error 
 	}
 	defer conn.Close(ctx)
 
-	_, err = conn.Exec(ctx, "insert into musics (filename, filepath) values ($1, $2)", filename, filepath)
+	_, err = conn.Exec(ctx, "insert into music (filename, filepath) values ($1, $2) on conflict (filepath) do nothing", filename, filepath)
 	if err != nil {
 		return err
 	}
@@ -29,7 +30,7 @@ func ListMusicDB(ctx context.Context) ([]*pb.MusicItem, error) {
 	}
 	defer conn.Close(ctx)
 
-	rows, err := conn.Query(ctx, "select id, filename from musics")
+	rows, err := conn.Query(ctx, "select id, filename from music")
 	if err != nil {
 		return nil, err
 	}
@@ -47,4 +48,20 @@ func ListMusicDB(ctx context.Context) ([]*pb.MusicItem, error) {
 		musics = append(musics, &music)
 	}
 	return musics, nil
+}
+
+func GetMusicIndoFromDB_on_ID(id string) (model.Music, error) {
+	var music model.Music
+	ctx := context.Background()
+	conn, err := db_connect.Connect()
+	if err != nil {
+		return model.Music{}, err
+	}
+	defer conn.Close(ctx)
+
+	err = conn.QueryRow(ctx, "select filename, filepath from music where id = $1", id).Scan(&music.FileName, &music.FilePath)
+	if err != nil {
+		return model.Music{}, err
+	}
+	return music, nil
 }

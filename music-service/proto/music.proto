@@ -6,13 +6,17 @@ option go_package = "./proto/gen;musicpb";
 
 service MusicService {
     rpc ListMusic(Empty) returns (ListResponse);
+    rpc UploadMusic(stream UploadMusicChunks) returns (UploadMusicResponse);
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
 }
 
-message UploadMusicChunk {
+message UploadMusicResponse {
+    string status = 1;
+}
+
+message UploadMusicChunks {
     string filename = 1;
     bytes data = 2;
-    bool is_last = 3;
 }
 
 message Empty {}
