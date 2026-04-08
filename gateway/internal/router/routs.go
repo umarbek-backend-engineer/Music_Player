@@ -2,18 +2,17 @@ package router
 
 import (
 	"gin-server/internal/handler"
-	"gin-server/internal/modules"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Route(rb *modules.Rabbit) *gin.Engine {
+func Route() *gin.Engine {
 
 	r := gin.Default()
 
-	r.POST("/upload/", func(cxt *gin.Context) {
-		handler.UploadHandler(cxt, rb)
-	})
+	r.POST("/music/", handler.Upload)
+	r.GET("/music/", handler.ListMusic)
+	r.GET("/music/:id", handler.StreamMusic)
 
 	return r
 }

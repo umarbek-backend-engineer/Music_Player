@@ -2,10 +2,39 @@ syntax = "proto3";
 
 package music;
 
-option go_package = "./proto/gen; musicpb";
+option go_package = "./proto/gen;musicpb";
 
-message MusicChunk {
+service MusicService {
+    rpc ListMusic(Empty) returns (ListResponse);
+    rpc UploadMusic(stream UploadMusicChunks) returns (UploadMusicResponse);
+    rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
+}
+
+message UploadMusicResponse {
+    string status = 1;
+}
+
+message UploadMusicChunks {
     string filename = 1;
     bytes data = 2;
-    bool is_last = 3;
+    // bool is_last =3;
+}
+
+message Empty {}
+
+message MusicItem {
+    string id = 1;
+    string filename = 2;
+}
+
+message ListResponse {
+    repeated MusicItem songs = 1;
+}
+
+message StreamRequest {
+    string id = 1;
+}
+
+message MusicChunk {
+    bytes content = 1;
 }

@@ -21,18 +21,288 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type MusicChunk struct {
+type UploadMusicResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        string                 `protobuf:"bytes,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMusicResponse) Reset() {
+	*x = UploadMusicResponse{}
+	mi := &file_proto_music_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMusicResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMusicResponse) ProtoMessage() {}
+
+func (x *UploadMusicResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_music_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMusicResponse.ProtoReflect.Descriptor instead.
+func (*UploadMusicResponse) Descriptor() ([]byte, []int) {
+	return file_proto_music_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *UploadMusicResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type UploadMusicChunks struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Filename      string                 `protobuf:"bytes,1,opt,name=filename,proto3" json:"filename,omitempty"`
 	Data          []byte                 `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
-	IsLast        bool                   `protobuf:"varint,3,opt,name=is_last,json=isLast,proto3" json:"is_last,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadMusicChunks) Reset() {
+	*x = UploadMusicChunks{}
+	mi := &file_proto_music_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadMusicChunks) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadMusicChunks) ProtoMessage() {}
+
+func (x *UploadMusicChunks) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_music_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadMusicChunks.ProtoReflect.Descriptor instead.
+func (*UploadMusicChunks) Descriptor() ([]byte, []int) {
+	return file_proto_music_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *UploadMusicChunks) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+func (x *UploadMusicChunks) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type Empty struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Empty) Reset() {
+	*x = Empty{}
+	mi := &file_proto_music_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Empty) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Empty) ProtoMessage() {}
+
+func (x *Empty) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_music_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
+func (*Empty) Descriptor() ([]byte, []int) {
+	return file_proto_music_proto_rawDescGZIP(), []int{2}
+}
+
+type MusicItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Filename      string                 `protobuf:"bytes,2,opt,name=filename,proto3" json:"filename,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MusicItem) Reset() {
+	*x = MusicItem{}
+	mi := &file_proto_music_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MusicItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MusicItem) ProtoMessage() {}
+
+func (x *MusicItem) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_music_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MusicItem.ProtoReflect.Descriptor instead.
+func (*MusicItem) Descriptor() ([]byte, []int) {
+	return file_proto_music_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *MusicItem) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *MusicItem) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+type ListResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Songs         []*MusicItem           `protobuf:"bytes,1,rep,name=songs,proto3" json:"songs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListResponse) Reset() {
+	*x = ListResponse{}
+	mi := &file_proto_music_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListResponse) ProtoMessage() {}
+
+func (x *ListResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_music_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListResponse.ProtoReflect.Descriptor instead.
+func (*ListResponse) Descriptor() ([]byte, []int) {
+	return file_proto_music_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ListResponse) GetSongs() []*MusicItem {
+	if x != nil {
+		return x.Songs
+	}
+	return nil
+}
+
+type StreamRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamRequest) Reset() {
+	*x = StreamRequest{}
+	mi := &file_proto_music_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamRequest) ProtoMessage() {}
+
+func (x *StreamRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_music_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
+func (*StreamRequest) Descriptor() ([]byte, []int) {
+	return file_proto_music_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *StreamRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type MusicChunk struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Content       []byte                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *MusicChunk) Reset() {
 	*x = MusicChunk{}
-	mi := &file_proto_music_proto_msgTypes[0]
+	mi := &file_proto_music_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +314,7 @@ func (x *MusicChunk) String() string {
 func (*MusicChunk) ProtoMessage() {}
 
 func (x *MusicChunk) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_music_proto_msgTypes[0]
+	mi := &file_proto_music_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,40 +327,41 @@ func (x *MusicChunk) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MusicChunk.ProtoReflect.Descriptor instead.
 func (*MusicChunk) Descriptor() ([]byte, []int) {
-	return file_proto_music_proto_rawDescGZIP(), []int{0}
+	return file_proto_music_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *MusicChunk) GetFilename() string {
+func (x *MusicChunk) GetContent() []byte {
 	if x != nil {
-		return x.Filename
-	}
-	return ""
-}
-
-func (x *MusicChunk) GetData() []byte {
-	if x != nil {
-		return x.Data
+		return x.Content
 	}
 	return nil
-}
-
-func (x *MusicChunk) GetIsLast() bool {
-	if x != nil {
-		return x.IsLast
-	}
-	return false
 }
 
 var File_proto_music_proto protoreflect.FileDescriptor
 
 const file_proto_music_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/music.proto\x12\x05music\"U\n" +
-	"\n" +
-	"MusicChunk\x12\x1a\n" +
+	"\x11proto/music.proto\x12\x05music\"-\n" +
+	"\x13UploadMusicResponse\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"C\n" +
+	"\x11UploadMusicChunks\x12\x1a\n" +
 	"\bfilename\x18\x01 \x01(\tR\bfilename\x12\x12\n" +
-	"\x04data\x18\x02 \x01(\fR\x04data\x12\x17\n" +
-	"\ais_last\x18\x03 \x01(\bR\x06isLastB\x16Z\x14./proto/gen; musicpbb\x06proto3"
+	"\x04data\x18\x02 \x01(\fR\x04data\"\a\n" +
+	"\x05Empty\"7\n" +
+	"\tMusicItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\bfilename\x18\x02 \x01(\tR\bfilename\"6\n" +
+	"\fListResponse\x12&\n" +
+	"\x05songs\x18\x01 \x03(\v2\x10.music.MusicItemR\x05songs\"\x1f\n" +
+	"\rStreamRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"&\n" +
+	"\n" +
+	"MusicChunk\x12\x18\n" +
+	"\acontent\x18\x01 \x01(\fR\acontent2\xbf\x01\n" +
+	"\fMusicService\x12.\n" +
+	"\tListMusic\x12\f.music.Empty\x1a\x13.music.ListResponse\x12E\n" +
+	"\vUploadMusic\x12\x18.music.UploadMusicChunks\x1a\x1a.music.UploadMusicResponse(\x01\x128\n" +
+	"\vStreamMusic\x12\x14.music.StreamRequest\x1a\x11.music.MusicChunk0\x01B\x15Z\x13./proto/gen;musicpbb\x06proto3"
 
 var (
 	file_proto_music_proto_rawDescOnce sync.Once
@@ -104,16 +375,29 @@ func file_proto_music_proto_rawDescGZIP() []byte {
 	return file_proto_music_proto_rawDescData
 }
 
-var file_proto_music_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_proto_music_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_proto_music_proto_goTypes = []any{
-	(*MusicChunk)(nil), // 0: music.MusicChunk
+	(*UploadMusicResponse)(nil), // 0: music.UploadMusicResponse
+	(*UploadMusicChunks)(nil),   // 1: music.UploadMusicChunks
+	(*Empty)(nil),               // 2: music.Empty
+	(*MusicItem)(nil),           // 3: music.MusicItem
+	(*ListResponse)(nil),        // 4: music.ListResponse
+	(*StreamRequest)(nil),       // 5: music.StreamRequest
+	(*MusicChunk)(nil),          // 6: music.MusicChunk
 }
 var file_proto_music_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: music.ListResponse.songs:type_name -> music.MusicItem
+	2, // 1: music.MusicService.ListMusic:input_type -> music.Empty
+	1, // 2: music.MusicService.UploadMusic:input_type -> music.UploadMusicChunks
+	5, // 3: music.MusicService.StreamMusic:input_type -> music.StreamRequest
+	4, // 4: music.MusicService.ListMusic:output_type -> music.ListResponse
+	0, // 5: music.MusicService.UploadMusic:output_type -> music.UploadMusicResponse
+	6, // 6: music.MusicService.StreamMusic:output_type -> music.MusicChunk
+	4, // [4:7] is the sub-list for method output_type
+	1, // [1:4] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_proto_music_proto_init() }
@@ -127,9 +411,9 @@ func file_proto_music_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_music_proto_rawDesc), len(file_proto_music_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   7,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_proto_music_proto_goTypes,
 		DependencyIndexes: file_proto_music_proto_depIdxs,

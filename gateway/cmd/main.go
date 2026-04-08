@@ -2,23 +2,24 @@ package main
 
 import (
 	cgf "gin-server/internal/config"
-	rabbitmq "gin-server/internal/rabbit-mq"
+	grp "gin-server/internal/grpc"
 	"gin-server/internal/router"
-	"log"
 )
 
 func main() {
 
 	// connect to rabbit mq
-	rb, err := rabbitmq.Connect()
-	if err != nil {
-		log.Println("Error in connecting rabbit MQ message broker")
-		return
-	}
+	// rb, err := rabbitmq.Connect()
+	// if err != nil {
+	// 	log.Println("Error in connecting rabbit MQ message broker")
+	// 	return
+	// }
+
+	grp.InitGRPC()
 
 	port := cgf.Load().Api_Port
 
-	r := router.Route(rb)
+	r := router.Route()
 
 	r.Run(":" + port)
 }
