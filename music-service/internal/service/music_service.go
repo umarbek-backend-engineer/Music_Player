@@ -1,9 +1,13 @@
 package service
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"music-service/internal/config"
 	rabbitmq "music-service/internal/rabbit-mq"
+	"music-service/internal/repository"
+	"music-service/pkg/utils"
 	pb "music-service/proto/gen"
 	"os"
 
@@ -18,7 +22,7 @@ func StartConsumer() error {
 
 	rabbit, err := rabbitmq.Connect()
 	if err != nil {
-		return err
+		return utils.MapErrors(err)
 	}
 	// defer rabbit.Conn.Close()
 	// defer rabbit.Ch.Close()
@@ -33,7 +37,7 @@ func StartConsumer() error {
 		nil,
 	)
 	if err != nil {
-		return err
+		return utils.MapErrors(err)
 	}
 
 	forever := make(chan struct{})
@@ -49,24 +53,29 @@ func StartConsumer() error {
 
 			err = proto.Unmarshal(d.Body, &chunk)
 			if err != nil {
-				log.Println("Failed to decode json:", err)
+				utils.MapErrors(err)
 				continue
 			}
+
+			filename = chunk.Filename
+
+			filePath := fmt.Sprintf("./%s/%s", cgf.StoragePath, chunk.Filename)
 
 			file := files[chunk.Filename]
 			// 🟢 create file if not exists
 			if file == nil {
-				file, err = os.Create("./"+ cgf.StoragePath +"/" + chunk.Filename)
+				file, err = os.Create(filePath)
 				if err != nil {
-					log.Println("Failed to create file:", err)
+					utils.MapErrors(err)
 					continue
 				}
+				files[chunk.Filename] = file
 			}
 
 			// 🟢 write chunk data
 			_, err := file.Write(chunk.Data)
 			if err != nil {
-				log.Println("Failed to write chunk:", err)
+				utils.MapErrors(err)
 				continue
 			}
 
@@ -74,16 +83,32 @@ func StartConsumer() error {
 			if chunk.IsLast {
 				log.Println("Finished file:", chunk.Filename)
 
+				// saving the music metadata in database
+				err = repository.UploadMusicDBHandler(context.Background(), filename, filePath)
+				if err != nil {
+					utils.MapErrors(err)
+					continue
+				}
 				file.Close()
-				file = nil
+				delete(files, filename)
 			}
 
 		}
 	}()
-
-	log.Println("Consumer started...")
 	<-forever
-	log.Println("Recieved file ", filename)
 	return nil
+
+}
+
+func (s *Server) ListMusic(ctx context.Context, req *pb.Empty) (*pb.ListResponse, error) {
+	// get the music from db
+	musics, err := repository.ListMusicDB(ctx)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	return &pb.ListResponse{
+		Songs: musics,
+	}, nil
 
 }

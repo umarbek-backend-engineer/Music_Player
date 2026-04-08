@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package music;
+
+option go_package = "./proto/gen; musicpb";
+
+message MusicChunk {
+    string filename = 1;
+    bytes data = 2;
+    bool is_last = 3;
+}
