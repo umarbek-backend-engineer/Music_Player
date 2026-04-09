@@ -17,7 +17,6 @@ message UploadMusicResponse {
 message UploadMusicChunks {
     string filename = 1;
     bytes data = 2;
-    // bool is_last =3;
 }
 
 message Empty {}
@@ -36,5 +35,6 @@ message StreamRequest {
 }
 
 message MusicChunk {
-    bytes content = 1;
+    string name = 1;
+    bytes content = 2;
 }

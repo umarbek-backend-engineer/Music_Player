@@ -208,6 +208,7 @@ func (s *Server) StreamMusic(req *pb.StreamRequest, stream pb.MusicService_Strea
 
 		// send the  chunk of music
 		err = stream.Send(&pb.MusicChunk{
+			Name:    music.FileName,
 			Content: buffer[:n],
 		})
 

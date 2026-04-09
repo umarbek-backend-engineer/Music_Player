@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"bytes"
 	grpc_init "gin-server/internal/grpc"
 	"gin-server/pkg/utils"
 	pb "gin-server/proto/gen"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -172,6 +174,7 @@ func ListMusic(c *gin.Context) {
 
 func StreamMusic(c *gin.Context) {
 	ctx := c.Request.Context()
+	var filename string
 
 	id := c.Param("id")
 
@@ -183,7 +186,11 @@ func StreamMusic(c *gin.Context) {
 
 	// setting header so that browser know that the file that I am passing is music
 	c.Header("Content-Type", "audio/mpeg")
+	c.Header("Accept-Ranges", "bytes")
 	c.Header("Content-Disposition", "inline")
+	c.Status(http.StatusOK)
+
+	var buffer bytes.Buffer
 
 	for {
 		chunk, err := stream.Recv()
@@ -195,15 +202,25 @@ func StreamMusic(c *gin.Context) {
 			return
 		}
 
-		// push the chunk of bytes to the browser
-		_, err = c.Writer.Write(chunk.Content)
-		if err != nil {
-			utils.Error(c, "Failed to write music in brower", http.StatusInternalServerError, err)
-			return
-		}
+		filename = chunk.Name
 
-		// Forces data to go immediately
-		c.Writer.Flush()
+		// // push the chunk of bytes to the browser
+		// _, err = c.Writer.Write(chunk.Content)
+		// if err != nil {
+		// 	utils.Error(c, "Failed to write music in brower", http.StatusInternalServerError, err)
+		// 	return
+		// }
+
+		// // Forces data to go immediately
+		// c.Writer.Flush()
+
+		// collects the bytes
+		buffer.Write(chunk.Content)
+
 	}
+
+	// ServeContent handles Range requests automatically — lets the browser seek
+	// to any position by returning only the requested bytes instead of the full file.
+	http.ServeContent(c.Writer, c.Request, filename, time.Time{}, bytes.NewReader(buffer.Bytes()))
 
 }

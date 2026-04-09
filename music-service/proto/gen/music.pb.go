@@ -295,7 +295,8 @@ func (x *StreamRequest) GetId() string {
 
 type MusicChunk struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Content       []byte                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Content       []byte                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -330,6 +331,13 @@ func (*MusicChunk) Descriptor() ([]byte, []int) {
 	return file_proto_music_proto_rawDescGZIP(), []int{6}
 }
 
+func (x *MusicChunk) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
 func (x *MusicChunk) GetContent() []byte {
 	if x != nil {
 		return x.Content
@@ -354,10 +362,11 @@ const file_proto_music_proto_rawDesc = "" +
 	"\fListResponse\x12&\n" +
 	"\x05songs\x18\x01 \x03(\v2\x10.music.MusicItemR\x05songs\"\x1f\n" +
 	"\rStreamRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"&\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\":\n" +
 	"\n" +
-	"MusicChunk\x12\x18\n" +
-	"\acontent\x18\x01 \x01(\fR\acontent2\xbf\x01\n" +
+	"MusicChunk\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
+	"\acontent\x18\x02 \x01(\fR\acontent2\xbf\x01\n" +
 	"\fMusicService\x12.\n" +
 	"\tListMusic\x12\f.music.Empty\x1a\x13.music.ListResponse\x12E\n" +
 	"\vUploadMusic\x12\x18.music.UploadMusicChunks\x1a\x1a.music.UploadMusicResponse(\x01\x128\n" +
