@@ -156,7 +156,7 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	// save meta data in database
 	err = repository.UploadMusicDBHandler(context.Background(), filename, filepath)
 	if err != nil {
-		utils.MapErrors(err)
+		return utils.MapErrors(err)
 	}
 	// send response
 	return stream.SendAndClose(&pb.UploadMusicResponse{
