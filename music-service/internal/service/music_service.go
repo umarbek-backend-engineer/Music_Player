@@ -154,7 +154,7 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	}
 
 	// save meta data in database
-	err = repository.UploadMusicDBHandler(context.Background(), filename, filepath)
+	err = repository.UploadMusicDBHandler(stream.Context(), filename, filepath)
 	if err != nil {
 		return utils.MapErrors(err)
 	}
@@ -180,8 +180,10 @@ func (s *Server) ListMusic(ctx context.Context, req *pb.Empty) (*pb.ListResponse
 
 func (s *Server) StreamMusic(req *pb.StreamRequest, stream pb.MusicService_StreamMusicServer) error {
 
+	ctx := stream.Context()
+
 	// Build file path (you may map ID → filename later)
-	music, err := repository.GetMusicIndoFromDB_on_ID(req.Id)
+	music, err := repository.GetMusicIndoFromDB_on_ID(ctx, req.Id)
 	if err != nil {
 		return utils.MapErrors(err)
 	}

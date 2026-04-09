@@ -50,9 +50,8 @@ func ListMusicDB(ctx context.Context) ([]*pb.MusicItem, error) {
 	return musics, nil
 }
 
-func GetMusicIndoFromDB_on_ID(id string) (model.Music, error) {
+func GetMusicIndoFromDB_on_ID(ctx context.Context, id string) (model.Music, error) {
 	var music model.Music
-	ctx := context.Background()
 	conn, err := db_connect.Connect()
 	if err != nil {
 		return model.Music{}, err

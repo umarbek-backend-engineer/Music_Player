@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: music_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1241
+      POSTGRES_DB: music_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+
+  music-service:
+    build: ./music-service
+    ports:
+      - "50051:50051"
+    env_file:
+      - ./music-service/.env
+    depends_on:
+      - postgres
+      # - rabbitmq
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+
+volumes:
+  postgres_data:

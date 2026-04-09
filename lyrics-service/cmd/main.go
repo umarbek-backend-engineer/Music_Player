@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"log"
 	"lyrics-service/internal/config"
+	"lyrics-service/internal/repository/posgres"
 	"lyrics-service/internal/service"
 	lyricspb "lyrics-service/proto/gen"
 	"net"
@@ -13,6 +15,14 @@ import (
 
 func main() {
 	cgf := config.Load()
+
+	// checking the connection of db
+	conn, err := posgres.Connect()
+	if err != nil {
+		log.Println("Failed to connect to db: ", err)
+		return
+	}
+	defer conn.Close(context.Background())
 
 	// creating net http listener
 	lis, err := net.Listen(cgf.NetWork_Protocol, cgf.Api_Host+":"+cgf.Api_Port)
