@@ -6,13 +6,14 @@ services:
     image: postgres:15
     container_name: music_db
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: docker
       POSTGRES_PASSWORD: 1241
       POSTGRES_DB: music_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres:/docker-entrypoint-initdb.d
 
   # rabbitmq:
   #   image: rabbitmq:3-management
@@ -30,6 +31,15 @@ services:
     depends_on:
       - postgres
       # - rabbitmq
+
+  migrator:
+    build: ./music-service/migrator
+    depends_on:
+      - postgres
+    command: [
+      "-path=/migrations",
+      "-database=postgresql://docker:1241@postgres:5432/music_db?sslmode=disable"
+    ]
 
   frontend:
     build: ./frontend

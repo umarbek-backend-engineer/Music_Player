@@ -1,0 +1,10 @@
+docker build -t migrator .
+
+// works in localhost
+docker run -v "C:\Users\Umarbek Xaydaraliyev\OneDrive\Desktop\Music_project\music-service\migrations:/migrations" migrate/migrate -path=/migrations -database "postgres://docker:1241@host.docker.internal:5432/music_db?sslmode=disable" up
+
+
+when it is dockerized
+docker-compose run migrator -path=/migrations -database=postgresql://docker:1241@postgres:5432/music_db?sslmode=disable up
+
+docker-compose run migrator -path=/migrations -database=postgresql://docker:1241@postgres:5432/music_db?sslmode=disable down
