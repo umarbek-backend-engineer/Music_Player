@@ -1,0 +1,1 @@
+CREATE DATABASE lyrics_db;

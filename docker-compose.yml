@@ -32,13 +32,24 @@ services:
       - postgres
       # - rabbitmq
 
-  migrator:
+  migrator-music:
     build: ./music-service/migrator
     depends_on:
       - postgres
     command: [
       "-path=/migrations",
-      "-database=postgresql://docker:1241@postgres:5432/music_db?sslmode=disable"
+      "-database=postgresql://docker:1241@postgres:5432/music_db?sslmode=disable",
+      "up",
+    ]
+
+  migrator-lyrics:
+    build: ./lyrics-service/migrator
+    depends_on:
+      - postgres
+    command: [
+      "-path=/migrations",
+      "-database=postgresql://docker:1241@postgres:5432/lyrics_db?sslmode=disable",
+      "up",
     ]
 
   frontend:

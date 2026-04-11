@@ -23,7 +23,7 @@ WORKDIR /app
 
 COPY --from=builder /app/app .
 COPY --from=builder /app/.env .
-COPY /migrations /migrations
+COPY migrator/migrations /migrations
 
 EXPOSE 50051
 
