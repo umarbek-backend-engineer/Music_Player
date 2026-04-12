@@ -49,6 +49,8 @@ services:
       - "50051:50051"
     env_file:
       - ./music-service/.env
+    volumes:
+      - ./storage:/app/storage
     depends_on:
       migrator-music:
         condition: service_completed_successfully
@@ -68,7 +70,7 @@ services:
   gateway:
     build: ./gateway
     ports:
-      - "8081:8080"
+      - "8080:8080"
     env_file:
       - ./gateway/.env
     depends_on:
@@ -79,12 +81,13 @@ services:
 
   # ------------------ FRONTEND ------------------
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:80"
-    depends_on:
-      - gateway
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:80"
+  #   depends_on:
+  #     - gateway
 
 volumes:
   postgres_data:
+  

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"music-service/internal/model"
 	"music-service/internal/repository/db_connect"
 	pb "music-service/proto/gen"
@@ -16,10 +17,15 @@ func UploadMusicDBHandler(ctx context.Context, filename, filepath string) error 
 	}
 	defer conn.Close(ctx)
 
-	_, err = conn.Exec(ctx, "insert into music (filename, filepath) values ($1, $2) on conflict (filepath) do nothing", filename, filepath)
+	msgTag, err := conn.Exec(ctx, "insert into music (filename, filepath) values ($1, $2) on conflict (filepath) do nothing", filename, filepath)
 	if err != nil {
 		return err
 	}
+
+	if msgTag.RowsAffected() == 0 {
+		return fmt.Errorf("no rows inserted (conflict or failure)")
+	}
+
 	return nil
 }
 

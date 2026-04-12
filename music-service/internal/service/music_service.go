@@ -100,7 +100,6 @@ import (
 // }
 
 func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
-
 	cgf := config.Load()
 	var file *os.File
 	var filename string
@@ -108,31 +107,24 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 
 	for {
 		req, err := stream.Recv()
-
 		if err == io.EOF {
 			break
 		}
-
 		if err != nil {
 			return utils.MapErrors(err)
 		}
-
 		if req.Filename != "" {
 			filename = req.Filename
 		}
-
 		// Create file on first chunk
 		if file == nil {
-
 			if filename == "" {
 				return utils.MapErrors(fmt.Errorf("Empty file name"))
 			}
-
 			err = os.MkdirAll(cgf.StoragePath, 0755)
 			if err != nil {
 				return utils.MapErrors(err)
 			}
-
 			filePath = filepath.Join(cgf.StoragePath, req.Filename)
 			log.Println(filePath)
 			file, err = os.Create(filePath)
@@ -141,7 +133,6 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 			}
 		}
 		//write the chunk
-
 		if len(req.Data) > 0 {
 			_, err = file.Write(req.Data)
 			if err != nil {
@@ -154,13 +145,11 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	if file == nil {
 		return utils.MapErrors(fmt.Errorf("no file received"))
 	}
-
 	// Close file explicitly
 	err := file.Close()
 	if err != nil {
 		return utils.MapErrors(err)
 	}
-
 	// save meta data in database
 	err = repository.UploadMusicDBHandler(stream.Context(), filename, filePath)
 	if err != nil {
