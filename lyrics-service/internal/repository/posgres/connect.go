@@ -12,7 +12,7 @@ import (
 func Connect() (*pgx.Conn, error) {
 	cgf := config.Load()
 
-	posgresURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=diable", cgf.DB_User, cgf.DB_Password, cgf.Api_Host, cgf.DB_Port, cgf.DB_Name)
+	posgresURL := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", cgf.DB_User, cgf.DB_Password, cgf.DB_Host, cgf.DB_Port, cgf.DB_Name)
 	client, err := pgx.Connect(context.Background(), posgresURL)
 	if err != nil {
 		return nil, err

@@ -21,7 +21,7 @@ type Config struct {
 
 func Load() *Config {
 
-	err := godotenv.Load("./cmd/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		err = utils.MapError(err)
 	}

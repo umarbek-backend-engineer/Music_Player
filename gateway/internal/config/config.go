@@ -19,7 +19,7 @@ type Config struct {
 }
 
 func Load() *Config {
-	err := godotenv.Load("./cmd/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Println(err)
 		log.Fatal("Error in load configurations")

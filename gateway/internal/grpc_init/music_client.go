@@ -10,7 +10,7 @@ import (
 
 var MusicClient pb.MusicServiceClient
 
-func InitGRPC() {
+func InitMusicGRPC() {
 	cgf := config.Load()
 	conn, err := grpc.Dial(cgf.Grpc_host+":"+cgf.Grpc_music_service_port, grpc.WithInsecure())
 	if err != nil {

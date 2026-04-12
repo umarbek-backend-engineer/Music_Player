@@ -1,1 +1,3 @@
+CREATE DATABASE music_db;
 CREATE DATABASE lyrics_db;
+CREATE DATABASE docker;

@@ -2,7 +2,7 @@ package main
 
 import (
 	cgf "gin-server/internal/config"
-	grp "gin-server/internal/grpc"
+	grp "gin-server/internal/grpc_init"
 	"gin-server/internal/router"
 )
 
@@ -15,7 +15,7 @@ func main() {
 	// 	return
 	// }
 
-	grp.InitGRPC()
+	grp.InitMusicGRPC()
 
 	port := cgf.Load().Api_Port
 

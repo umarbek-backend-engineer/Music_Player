@@ -2,7 +2,7 @@ package handler
 
 import (
 	"bytes"
-	grpc_init "gin-server/internal/grpc"
+	grpc_init "gin-server/internal/grpc_init"
 	"gin-server/pkg/utils"
 	pb "gin-server/proto/gen"
 	"io"

@@ -506,7 +506,7 @@ input[type=range]::-webkit-slider-thumb {
 <audio id="audio"></audio>
 
 <script>
-const BASE = '';
+const BASE = `${window.location.protocol}//${window.location.hostname}:8081`;
 const audio = document.getElementById('audio');
 let tracks = [], current = -1, shuffle = false, repeat = false;
 

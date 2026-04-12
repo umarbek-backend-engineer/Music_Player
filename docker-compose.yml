@@ -1,26 +1,47 @@
-version: "3.9"
-
 services:
 
   postgres:
     image: postgres:15
-    container_name: music_db
+    container_name: postgres
     environment:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: 1241
-      POSTGRES_DB: music_db
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docker"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   container_name: rabbitmq
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
+  # ------------------ MIGRATORS ------------------
+
+  migrator-music:
+    build: ./music-service/migrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [
+      "-path=/migrations",
+      "-database=postgresql://docker:1241@postgres:5432/music_db?sslmode=disable",
+      "up"
+    ]
+
+  migrator-lyrics:
+    build: ./lyrics-service/migrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [
+      "-path=/migrations",
+      "-database=postgresql://docker:1241@postgres:5432/lyrics_db?sslmode=disable",
+      "up"
+    ]
+
+  # ------------------ SERVICES ------------------
 
   music-service:
     build: ./music-service
@@ -29,33 +50,41 @@ services:
     env_file:
       - ./music-service/.env
     depends_on:
-      - postgres
-      # - rabbitmq
+      migrator-music:
+        condition: service_completed_successfully
 
-  migrator-music:
-    build: ./music-service/migrator
+  lyrics-service:
+    build: ./lyrics-service
+    ports:
+      - "50052:50052"
+    env_file:
+      - ./lyrics-service/.env
     depends_on:
-      - postgres
-    command: [
-      "-path=/migrations",
-      "-database=postgresql://docker:1241@postgres:5432/music_db?sslmode=disable",
-      "up",
-    ]
+      migrator-lyrics:
+        condition: service_completed_successfully
 
-  migrator-lyrics:
-    build: ./lyrics-service/migrator
+  # ------------------ GATEWAY ------------------
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "8081:8080"
+    env_file:
+      - ./gateway/.env
     depends_on:
-      - postgres
-    command: [
-      "-path=/migrations",
-      "-database=postgresql://docker:1241@postgres:5432/lyrics_db?sslmode=disable",
-      "up",
-    ]
+      music-service:
+        condition: service_started
+      lyrics-service:
+        condition: service_started
+
+  # ------------------ FRONTEND ------------------
 
   frontend:
     build: ./frontend
     ports:
       - "3000:80"
+    depends_on:
+      - gateway
 
 volumes:
   postgres_data:

@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"music-service/internal/config"
 	"music-service/internal/repository"
 	"music-service/pkg/utils"
 	pb "music-service/proto/gen"
 	"os"
+	"path/filepath"
 )
 
 // func StartConsumer() error {
@@ -102,7 +104,7 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	cgf := config.Load()
 	var file *os.File
 	var filename string
-	var filepath string
+	var filePath string
 
 	for {
 		req, err := stream.Recv()
@@ -126,8 +128,14 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 				return utils.MapErrors(fmt.Errorf("Empty file name"))
 			}
 
-			filepath = cgf.StoragePath + "/" + req.Filename
-			file, err = os.Create(filepath)
+			err = os.MkdirAll(cgf.StoragePath, 0755)
+			if err != nil {
+				return utils.MapErrors(err)
+			}
+
+			filePath = filepath.Join(cgf.StoragePath, req.Filename)
+			log.Println(filePath)
+			file, err = os.Create(filePath)
 			if err != nil {
 				return utils.MapErrors(err)
 			}
@@ -154,7 +162,7 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	}
 
 	// save meta data in database
-	err = repository.UploadMusicDBHandler(stream.Context(), filename, filepath)
+	err = repository.UploadMusicDBHandler(stream.Context(), filename, filePath)
 	if err != nil {
 		return utils.MapErrors(err)
 	}

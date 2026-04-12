@@ -24,6 +24,7 @@ WORKDIR /app
 COPY --from=builder /app/app .
 COPY --from=builder /app/.env .
 COPY migrator/migrations /migrations
+RUN mkdir -p /app/storage
 
 EXPOSE 50051
 

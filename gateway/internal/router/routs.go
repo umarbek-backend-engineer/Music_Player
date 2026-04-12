@@ -20,7 +20,7 @@ func Route() *gin.Engine {
 		MaxAge:           12 * time.Hour,
 	}))
 	r.GET("/", func(c *gin.Context) {
-		c.File("../frontend/index.html")
+		c.JSON(200, gin.H{"status": "gateway is running"})
 	})
 
 	r.POST("/music", handler.Upload)
