@@ -2,12 +2,13 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v6.33.5
-// source: proto/music.proto
+// source: music.proto
 
-package musicpb
+package pb
 
 import (
 	context "context"
+
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -190,5 +191,5 @@ var MusicService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "proto/music.proto",
+	Metadata: "music.proto",
 }

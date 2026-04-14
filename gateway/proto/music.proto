@@ -2,10 +2,12 @@ syntax = "proto3";
 
 package music;
 
+import "lyrics.proto";
+
 option go_package = "./proto/gen;pb";
 
 service MusicService {
-    rpc ListMusic(Empty) returns (ListResponse);
+    rpc ListMusic(lyrics.Empty) returns (ListResponse);
     rpc UploadMusic(stream UploadMusicChunks) returns (UploadMusicResponse);
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
 }
@@ -18,8 +20,6 @@ message UploadMusicChunks {
     string filename = 1;
     bytes data = 2;
 }
-
-message Empty {}
 
 message MusicItem {
     string id = 1;
