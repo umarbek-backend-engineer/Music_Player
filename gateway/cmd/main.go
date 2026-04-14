@@ -4,6 +4,7 @@ import (
 	cgf "gin-server/internal/config"
 	grp "gin-server/internal/grpc_init"
 	"gin-server/internal/router"
+	"log"
 )
 
 func main() {
@@ -20,6 +21,8 @@ func main() {
 	port := cgf.Load().Api_Port
 
 	r := router.Route()
+
+	log.Println("Gateway service is running on port: ", port)
 
 	r.Run(":" + port)
 }

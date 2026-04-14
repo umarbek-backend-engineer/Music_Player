@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package music;
+
+option go_package = "./proto/gen;pb";
+
+service MusicService {
+    rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
+}
+
+message StreamRequest {
+    string id = 1;
+}
+
+message MusicChunk {
+    string name = 1;
+    bytes content = 2;
+}

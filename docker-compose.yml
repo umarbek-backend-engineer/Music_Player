@@ -43,6 +43,14 @@ services:
 
   # ------------------ SERVICES ------------------
 
+  transcription-service:
+    build: ./transcription-service
+    container_name: transcription-service
+    ports:
+      - "5001:5001"
+    volumes:
+      - whisper_cache:/root/.cache/whisper
+
   music-service:
     build: ./music-service
     ports:
@@ -64,13 +72,16 @@ services:
     depends_on:
       migrator-lyrics:
         condition: service_completed_successfully
+      transcription-service:
+        condition: service_started
+      
 
   # ------------------ GATEWAY ------------------
 
   gateway:
     build: ./gateway
     ports:
-      - "8080:8080"
+      - "9090:8080"
     env_file:
       - ./gateway/.env
     depends_on:
@@ -90,4 +101,4 @@ services:
 
 volumes:
   postgres_data:
-  
+  whisper_cache:

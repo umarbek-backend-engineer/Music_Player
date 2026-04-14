@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.1
 // - protoc             v6.33.5
-// source: proto/lyrics.proto
+// source: lyrics.proto
 
-package lyricspb
+package pb
 
 import (
 	context "context"
@@ -155,5 +155,5 @@ var LyricsService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/lyrics.proto",
+	Metadata: "lyrics.proto",
 }
