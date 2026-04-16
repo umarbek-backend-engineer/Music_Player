@@ -9,17 +9,40 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type addLyricsPayload struct {
+	MusicID string `json:"music_id" binding:"required"`
+	Text    string `json:"text" binding:"required"`
+}
+
 func AddLyrics(c *gin.Context) {
 	ctx := c.Request.Context()
+	var req addLyricsPayload
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		utils.Error(c, "invalid request body", http.StatusBadRequest, err)
+		return
+	}
 
 	_, err := grpc_init.LyricsClient.AddLyrics(ctx, &pb.AddLyricsRequest{
-		MusicId: "fa28f3c1-dd34-446b-be18-7c2563463406",
-		Text:    "Amy Winehouse - Back To Black.mp3",
+		MusicId: req.MusicID,
+		Text:    req.Text,
 	})
 
 	if err != nil {
 		utils.Error(c, "failed to add lyrics", http.StatusBadGateway, err)
 		return
 	}
+
+	lyricsRes, err := grpc_init.LyricsClient.GetLyrics(ctx, &pb.GetLyricsRequest{MusicId: req.MusicID})
+	if err != nil {
+		utils.Error(c, "failed to fetch lyrics", http.StatusBadGateway, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success":  true,
+		"music_id": lyricsRes.MusicId,
+		"text":     lyricsRes.Text,
+	})
 
 }

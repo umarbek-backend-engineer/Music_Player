@@ -11,6 +11,7 @@ import (
 func Route() *gin.Engine {
 
 	r := gin.Default()
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},

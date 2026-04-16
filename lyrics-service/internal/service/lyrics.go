@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"io"
 	"log"
 	"lyrics-service/internal/repository"
 	"lyrics-service/pkg/utils"
@@ -49,13 +50,15 @@ func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*pb.E
 	for {
 		//recieving the music chunks
 		res, err := stream.Recv()
-		if err != nil {
-			log.Println("Error recieving the music chunks: ", err)
+		if err == io.EOF {
 			break
+		}
+		if err != nil {
+			return nil, utils.MapError(err)
 		}
 
 		if res.Name != "" {
-			filename = req.Text
+			filename = res.Name
 		}
 
 		// writing in buffer
@@ -66,20 +69,31 @@ func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*pb.E
 		}
 	}
 
-	text, err := utils.SendToWisper(buffer.Bytes(), filename)
+	LyricsResp, err := utils.SendToWisper(buffer.Bytes(), filename)
 	if err != nil {
 		return nil, utils.MapError(err)
 	}
 
-	log.Println("lyrics: ", text)
+	log.Println(LyricsResp)
+
+	err = repository.SaveLyrics(ctx, req.MusicId, req.Text, LyricsResp)
+	if err != nil {
+		return nil, utils.MapError(err)
+	}
+
+	log.Println("lyrics: ", LyricsResp)
 
 	return &pb.Empty{}, nil
 }
 
 func (s *Server) GetLyrics(ctx context.Context, req *pb.GetLyricsRequest) (*pb.LyricsResponse, error) {
+	text, err := repository.GetLyricsByMusicID(ctx, req.MusicId)
+	if err != nil {
+		return nil, utils.MapError(err)
+	}
 
 	return &pb.LyricsResponse{
-		MusicId: "music_Id",
-		Text:    "Music Lyrics",
+		MusicId: req.MusicId,
+		Text:    text,
 	}, nil
 }

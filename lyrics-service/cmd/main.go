@@ -25,7 +25,7 @@ func main() {
 	defer conn.Close(context.Background())
 
 	// creating net http listener
-	lis, err := net.Listen(cgf.NetWork_Protocol, cgf.Api_Host+":"+cgf.Api_Port)
+	lis, err := net.Listen(cgf.NetWork_Protocol, ":"+cgf.Api_Port)
 	if err != nil {
 		log.Println("Failed to create http listener", err)
 		return

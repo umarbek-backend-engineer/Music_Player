@@ -2,10 +2,11 @@ package utils
 
 import (
 	"fmt"
+	"io"
 	"mime/multipart"
 )
 
-func FileValidator(fileHeader *multipart.FileHeader) error {
+func FileValidator(fileHeader *multipart.FileHeader, file multipart.File) error {
 	const maxFileSize = 10 << 20
 
 	if fileHeader.Size > maxFileSize {
@@ -13,9 +14,19 @@ func FileValidator(fileHeader *multipart.FileHeader) error {
 	}
 
 	contentType := fileHeader.Header.Get("Content-Type")
-
-	if contentType != "audio/mpeg" && contentType != "audio/wav" {
+	if contentType != "" && contentType != "audio/mpeg" && contentType != "audio/wav" && contentType != "audio/x-wav" && contentType != "audio/wave" {
 		return fmt.Errorf("Only MP3 or WAV allowed")
 	}
+
+	seeker, ok := file.(io.Seeker)
+	if !ok {
+		return fmt.Errorf("Unable to reset uploaded file")
+	}
+
+	_, err := seeker.Seek(0, io.SeekStart)
+	if err != nil {
+		return fmt.Errorf("Unable to reset uploaded file")
+	}
+
 	return nil
 }

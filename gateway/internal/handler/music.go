@@ -109,6 +109,12 @@ func Upload(c *gin.Context) {
 	}
 	defer file.Close()
 
+	err = utils.FileValidator(fileheader, file)
+	if err != nil {
+		utils.Error(c, "Invalid File", http.StatusBadRequest, err)
+		return
+	}
+
 	// connecting to grpc and  getting stream data
 	stream, err := grpc_init.MusicClient.UploadMusic(ctx)
 	if err != nil {

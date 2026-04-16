@@ -50,6 +50,17 @@ services:
       - "5001:5001"
     volumes:
       - whisper_cache:/root/.cache/whisper
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 180s 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
 
   music-service:
     build: ./music-service
@@ -69,11 +80,13 @@ services:
       - "50052:50052"
     env_file:
       - ./lyrics-service/.env
+    volumes:
+      - whisper_cache:/root/.cache/whisper
     depends_on:
       migrator-lyrics:
         condition: service_completed_successfully
       transcription-service:
-        condition: service_started
+        condition: service_healthy
       
 
   # ------------------ GATEWAY ------------------
