@@ -51,11 +51,11 @@ services:
     volumes:
       - whisper_cache:/root/.cache/whisper
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5001/health')"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 180s 
+      start_period: 500s 
     deploy:
       resources:
         reservations:
@@ -104,13 +104,6 @@ services:
         condition: service_started
 
   # ------------------ FRONTEND ------------------
-
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "3000:80"
-  #   depends_on:
-  #     - gateway
 
 volumes:
   postgres_data:

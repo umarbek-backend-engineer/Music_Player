@@ -6,7 +6,7 @@ import uuid
 app = Flask(__name__)
 
 # 🔥 Better model (balance speed + accuracy)
-model = whisper.load_model("large")
+model = whisper.load_model("medium")
 # use "medium" or "large" if you want higher accuracy (slower)
 
 @app.route("/transcribe", methods=["POST"])

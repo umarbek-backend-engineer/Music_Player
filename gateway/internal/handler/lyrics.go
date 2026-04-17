@@ -2,6 +2,7 @@ package handler
 
 import (
 	"gin-server/internal/grpc_init"
+	"gin-server/internal/modules"
 	"gin-server/pkg/utils"
 	pb "gin-server/proto/gen"
 	"net/http"
@@ -9,14 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type addLyricsPayload struct {
-	MusicID string `json:"music_id" binding:"required"`
-	Text    string `json:"text" binding:"required"`
-}
-
 func AddLyrics(c *gin.Context) {
 	ctx := c.Request.Context()
-	var req addLyricsPayload
+	var req modules.AddLyricsPayload
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.Error(c, "invalid request body", http.StatusBadRequest, err)

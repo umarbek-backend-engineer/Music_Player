@@ -42,7 +42,7 @@ func SendToWisper(data []byte, filename string) (model.Respond, error) {
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	client := &http.Client{
-		Timeout: 120 * time.Second,
+		Timeout: 500 * time.Second,
 	}
 
 	// sending the created request
