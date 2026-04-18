@@ -29,16 +29,41 @@ func AddLyrics(c *gin.Context) {
 		return
 	}
 
-	lyricsRes, err := grpc_init.LyricsClient.GetLyrics(ctx, &pb.GetLyricsRequest{MusicId: req.MusicID})
+	c.JSON(http.StatusOK, gin.H{
+		"success":  true,
+		"music_id": req.MusicID,
+		"message":  "Lyrics Added successfully",
+	})
+}
+
+func GetLyrics(c *gin.Context) {
+
+	ctx := c.Request.Context()
+
+	idStr := c.Param("id")
+
+	resp, err := grpc_init.LyricsClient.GetLyrics(ctx, &pb.GetLyricsRequest{
+		MusicId: idStr,
+	})
+
 	if err != nil {
-		utils.Error(c, "failed to fetch lyrics", http.StatusBadGateway, err)
+		utils.Error(c, "Failed to get lyrics from lyrics-service", http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"success":  true,
-		"music_id": lyricsRes.MusicId,
-		"text":     lyricsRes.Text,
+	segments := make([]modules.Segment, 0, len(resp.Lyrics))
+
+	for _, i := range resp.Lyrics {
+		segments = append(segments, modules.Segment{
+			Start: float64(i.Start),
+			End:   float64(i.End),
+			Text:  i.Text,
+		})
+	}
+
+	c.JSON(http.StatusOK, modules.Respond{
+		Lyrics:   segments,
+		Language: resp.Language,
 	})
 
 }

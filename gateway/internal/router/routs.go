@@ -29,6 +29,7 @@ func Route() *gin.Engine {
 	r.GET("/music/:id", handler.StreamMusic)
 
 	r.POST("/lyrics", handler.AddLyrics)
+	r.GET("lyrics/:id", handler.GetLyrics)
 
 	return r
 }
