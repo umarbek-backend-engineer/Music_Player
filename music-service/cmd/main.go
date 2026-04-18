@@ -11,7 +11,6 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -45,8 +44,6 @@ func main() {
 
 	// registering the functionality of this service
 	pb.RegisterMusicServiceServer(server, &service.Server{})
-
-	reflection.Register(server)
 
 	log.Println("Server is running on port :50051")
 	err = server.Serve(lis)

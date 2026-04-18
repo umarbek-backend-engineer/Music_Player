@@ -14,8 +14,14 @@ message GetLyricsRequest {
 }
 
 message LyricsResponse{
-    string music_id = 1;
-    string text = 2;
+    string language = 1;
+    repeated LyricsStruct lyrics = 2;
+}
+
+message LyricsStruct {
+    float start = 1;
+    float end = 2;
+    string text = 3;
 }
 
 message AddLyricsRequest {

@@ -105,6 +105,15 @@ services:
 
   # ------------------ FRONTEND ------------------
 
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      gateway:
+        condition: service_started
+
 volumes:
   postgres_data:
   whisper_cache:

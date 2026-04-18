@@ -74,26 +74,32 @@ func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*pb.E
 		return nil, utils.MapError(err)
 	}
 
-	log.Println(LyricsResp)
-
 	err = repository.SaveLyrics(ctx, req.MusicId, req.Text, LyricsResp)
 	if err != nil {
 		return nil, utils.MapError(err)
 	}
 
-	log.Println("lyrics: ", LyricsResp)
-
 	return &pb.Empty{}, nil
 }
 
 func (s *Server) GetLyrics(ctx context.Context, req *pb.GetLyricsRequest) (*pb.LyricsResponse, error) {
-	text, err := repository.GetLyricsByMusicID(ctx, req.MusicId)
+	resp, err := repository.GetLyricsByMusicID(ctx, req.MusicId)
 	if err != nil {
 		return nil, utils.MapError(err)
 	}
 
+	lyrics := make([]*pb.LyricsStruct, 0, len(resp.Lyrics))
+
+	for _, seg := range resp.Lyrics {
+		lyrics = append(lyrics, &pb.LyricsStruct{
+			Start: float32(seg.Start),
+			End:   float32(seg.End),
+			Text:  seg.Text,
+		})
+	}
+
 	return &pb.LyricsResponse{
-		MusicId: req.MusicId,
-		Text:    text,
+		Language: resp.Language,
+		Lyrics:   lyrics,
 	}, nil
 }

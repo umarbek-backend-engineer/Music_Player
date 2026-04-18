@@ -47,23 +47,23 @@ func SaveLyrics(ctx context.Context, musicID, musicName string, content model.Re
 	return err
 }
 
-func GetLyricsByMusicID(ctx context.Context, musicID string) (string, error) {
+func GetLyricsByMusicID(ctx context.Context, musicID string) (model.Respond, error) {
 	conn, err := posgres.Connect()
 	if err != nil {
-		return "", err
+		return model.Respond{}, err
 	}
 	defer conn.Close(ctx)
 
-	var content string
+	var content model.Respond
 	err = conn.QueryRow(ctx,
-		"select content #>> '{}' from lyrics where music_id = $1 order by id desc limit 1",
+		"select content from lyrics where music_id = $1",
 		musicID,
 	).Scan(&content)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return "", nil
+			return model.Respond{}, nil
 		}
-		return "", err
+		return model.Respond{}, err
 	}
 
 	return content, nil

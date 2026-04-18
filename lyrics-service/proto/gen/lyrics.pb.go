@@ -67,8 +67,8 @@ func (x *GetLyricsRequest) GetMusicId() string {
 
 type LyricsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	MusicId       string                 `protobuf:"bytes,1,opt,name=music_id,json=musicId,proto3" json:"music_id,omitempty"`
-	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
+	Language      string                 `protobuf:"bytes,1,opt,name=language,proto3" json:"language,omitempty"`
+	Lyrics        []*LyricsStruct        `protobuf:"bytes,2,rep,name=lyrics,proto3" json:"lyrics,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -103,14 +103,74 @@ func (*LyricsResponse) Descriptor() ([]byte, []int) {
 	return file_lyrics_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *LyricsResponse) GetMusicId() string {
+func (x *LyricsResponse) GetLanguage() string {
 	if x != nil {
-		return x.MusicId
+		return x.Language
 	}
 	return ""
 }
 
-func (x *LyricsResponse) GetText() string {
+func (x *LyricsResponse) GetLyrics() []*LyricsStruct {
+	if x != nil {
+		return x.Lyrics
+	}
+	return nil
+}
+
+type LyricsStruct struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Start         float32                `protobuf:"fixed32,1,opt,name=start,proto3" json:"start,omitempty"`
+	End           float32                `protobuf:"fixed32,2,opt,name=end,proto3" json:"end,omitempty"`
+	Text          string                 `protobuf:"bytes,3,opt,name=text,proto3" json:"text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LyricsStruct) Reset() {
+	*x = LyricsStruct{}
+	mi := &file_lyrics_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LyricsStruct) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LyricsStruct) ProtoMessage() {}
+
+func (x *LyricsStruct) ProtoReflect() protoreflect.Message {
+	mi := &file_lyrics_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LyricsStruct.ProtoReflect.Descriptor instead.
+func (*LyricsStruct) Descriptor() ([]byte, []int) {
+	return file_lyrics_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *LyricsStruct) GetStart() float32 {
+	if x != nil {
+		return x.Start
+	}
+	return 0
+}
+
+func (x *LyricsStruct) GetEnd() float32 {
+	if x != nil {
+		return x.End
+	}
+	return 0
+}
+
+func (x *LyricsStruct) GetText() string {
 	if x != nil {
 		return x.Text
 	}
@@ -127,7 +187,7 @@ type AddLyricsRequest struct {
 
 func (x *AddLyricsRequest) Reset() {
 	*x = AddLyricsRequest{}
-	mi := &file_lyrics_proto_msgTypes[2]
+	mi := &file_lyrics_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -139,7 +199,7 @@ func (x *AddLyricsRequest) String() string {
 func (*AddLyricsRequest) ProtoMessage() {}
 
 func (x *AddLyricsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_lyrics_proto_msgTypes[2]
+	mi := &file_lyrics_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -152,7 +212,7 @@ func (x *AddLyricsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddLyricsRequest.ProtoReflect.Descriptor instead.
 func (*AddLyricsRequest) Descriptor() ([]byte, []int) {
-	return file_lyrics_proto_rawDescGZIP(), []int{2}
+	return file_lyrics_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AddLyricsRequest) GetMusicId() string {
@@ -177,7 +237,7 @@ type Empty struct {
 
 func (x *Empty) Reset() {
 	*x = Empty{}
-	mi := &file_lyrics_proto_msgTypes[3]
+	mi := &file_lyrics_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -189,7 +249,7 @@ func (x *Empty) String() string {
 func (*Empty) ProtoMessage() {}
 
 func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_lyrics_proto_msgTypes[3]
+	mi := &file_lyrics_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -202,7 +262,7 @@ func (x *Empty) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Empty.ProtoReflect.Descriptor instead.
 func (*Empty) Descriptor() ([]byte, []int) {
-	return file_lyrics_proto_rawDescGZIP(), []int{3}
+	return file_lyrics_proto_rawDescGZIP(), []int{4}
 }
 
 var File_lyrics_proto protoreflect.FileDescriptor
@@ -211,10 +271,14 @@ const file_lyrics_proto_rawDesc = "" +
 	"\n" +
 	"\flyrics.proto\x12\x06lyrics\"-\n" +
 	"\x10GetLyricsRequest\x12\x19\n" +
-	"\bmusic_id\x18\x01 \x01(\tR\amusicId\"?\n" +
-	"\x0eLyricsResponse\x12\x19\n" +
-	"\bmusic_id\x18\x01 \x01(\tR\amusicId\x12\x12\n" +
-	"\x04text\x18\x02 \x01(\tR\x04text\"A\n" +
+	"\bmusic_id\x18\x01 \x01(\tR\amusicId\"Z\n" +
+	"\x0eLyricsResponse\x12\x1a\n" +
+	"\blanguage\x18\x01 \x01(\tR\blanguage\x12,\n" +
+	"\x06lyrics\x18\x02 \x03(\v2\x14.lyrics.LyricsStructR\x06lyrics\"J\n" +
+	"\fLyricsStruct\x12\x14\n" +
+	"\x05start\x18\x01 \x01(\x02R\x05start\x12\x10\n" +
+	"\x03end\x18\x02 \x01(\x02R\x03end\x12\x12\n" +
+	"\x04text\x18\x03 \x01(\tR\x04text\"A\n" +
 	"\x10AddLyricsRequest\x12\x19\n" +
 	"\bmusic_id\x18\x01 \x01(\tR\amusicId\x12\x12\n" +
 	"\x04text\x18\x02 \x01(\tR\x04text\"\a\n" +
@@ -235,23 +299,25 @@ func file_lyrics_proto_rawDescGZIP() []byte {
 	return file_lyrics_proto_rawDescData
 }
 
-var file_lyrics_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_lyrics_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_lyrics_proto_goTypes = []any{
 	(*GetLyricsRequest)(nil), // 0: lyrics.GetLyricsRequest
 	(*LyricsResponse)(nil),   // 1: lyrics.LyricsResponse
-	(*AddLyricsRequest)(nil), // 2: lyrics.AddLyricsRequest
-	(*Empty)(nil),            // 3: lyrics.Empty
+	(*LyricsStruct)(nil),     // 2: lyrics.LyricsStruct
+	(*AddLyricsRequest)(nil), // 3: lyrics.AddLyricsRequest
+	(*Empty)(nil),            // 4: lyrics.Empty
 }
 var file_lyrics_proto_depIdxs = []int32{
-	0, // 0: lyrics.LyricsService.GetLyrics:input_type -> lyrics.GetLyricsRequest
-	2, // 1: lyrics.LyricsService.AddLyrics:input_type -> lyrics.AddLyricsRequest
-	1, // 2: lyrics.LyricsService.GetLyrics:output_type -> lyrics.LyricsResponse
-	3, // 3: lyrics.LyricsService.AddLyrics:output_type -> lyrics.Empty
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: lyrics.LyricsResponse.lyrics:type_name -> lyrics.LyricsStruct
+	0, // 1: lyrics.LyricsService.GetLyrics:input_type -> lyrics.GetLyricsRequest
+	3, // 2: lyrics.LyricsService.AddLyrics:input_type -> lyrics.AddLyricsRequest
+	1, // 3: lyrics.LyricsService.GetLyrics:output_type -> lyrics.LyricsResponse
+	4, // 4: lyrics.LyricsService.AddLyrics:output_type -> lyrics.Empty
+	3, // [3:5] is the sub-list for method output_type
+	1, // [1:3] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_lyrics_proto_init() }
@@ -265,7 +331,7 @@ func file_lyrics_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_lyrics_proto_rawDesc), len(file_lyrics_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

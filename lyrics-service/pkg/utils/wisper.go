@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"lyrics-service/internal/model"
 	"mime/multipart"
 	"net/http"
@@ -35,7 +34,7 @@ func SendToWisper(data []byte, filename string) (model.Respond, error) {
 	)
 
 	if err != nil {
-		 return model.Respond{}, err
+		return model.Respond{}, err
 	}
 
 	// setting headers for content type of formdata
@@ -48,7 +47,7 @@ func SendToWisper(data []byte, filename string) (model.Respond, error) {
 	// sending the created request
 	res, err := client.Do(req)
 	if err != nil {
-		 return model.Respond{}, err
+		return model.Respond{}, err
 	}
 
 	defer res.Body.Close()
@@ -61,12 +60,12 @@ func SendToWisper(data []byte, filename string) (model.Respond, error) {
 
 	err = json.NewDecoder(res.Body).Decode(&lyricsBody)
 	if err != nil {
-		 return model.Respond{}, err
+		return model.Respond{}, err
 	}
 
-	// get the real response transcriptc
-	bodyBytes, _ := io.ReadAll(res.Body)
-	fmt.Println(string(bodyBytes))
+	// // get the real response transcriptc
+	// bodyBytes, _ := io.ReadAll(res.Body)
+	// fmt.Println(string(bodyBytes))
 
 	return lyricsBody, nil
 }

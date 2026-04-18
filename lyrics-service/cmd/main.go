@@ -10,7 +10,6 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -36,9 +35,6 @@ func main() {
 	gs := grpc.NewServer()
 
 	lyricspb.RegisterLyricsServiceServer(gs, &service.Server{})
-
-	// only in production stage fro postman
-	reflection.Register(gs)
 
 	// runnning the server
 	log.Println("Server is running on port: ", cgf.Api_Port)
