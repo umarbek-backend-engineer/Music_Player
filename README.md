@@ -14,12 +14,37 @@ An AI-powered music streaming platform built as a microservice system. Upload tr
 
 ---
 
+## 🖥️ Frontend (Web UI)
+
+A minimal static frontend is included in `frontend/` and is served by **Nginx** in Docker.
+
+- **Location:** `frontend/index.html`
+- **Server:** Nginx (`frontend` service)
+- **URL:** `http://localhost:3000`
+
+### API override (if gateway is not localhost:9090)
+
+By default, the UI talks to the gateway at `http://localhost:9090`.
+
+To override, open:
+
+```text
+http://localhost:3000/?api=http://localhost:9090
+```
+
+---
+
 ## 🏗️ Architecture
 
 ```
 Client (Browser)
-    │  HTTP REST
+    │  HTTP (static assets)
     ▼
+┌───────────┐
+│ Frontend  │  (Nginx) :3000
+└─────┬─────┘
+      │  HTTP REST
+      ▼
 ┌─────────┐        gRPC        ┌───────────────┐       SQL      ┌──────────┐
 │ Gateway │ ──────────────────▶│ music-service │ ─────────────▶│ Postgres │
 │  :9090  │                    │    :50051     │               │  :5433   │
@@ -41,6 +66,7 @@ Client (Browser)
 
 | Service | Language | Transport | Port (host→container) | Purpose |
 |---|---|---|---|---|
+| `frontend` | HTML/JS + Nginx | HTTP | `3000 → 80` | Browser UI (static site) |
 | `gateway` | Go / Gin | HTTP REST | `9090 → 8080` | Public-facing API |
 | `music-service` | Go | gRPC | `50051 → 50051` | Music metadata + file storage |
 | `lyrics-service` | Go | gRPC | `50052 → 50052` | Lyrics storage + transcription orchestration |
@@ -68,7 +94,7 @@ This will automatically:
 1. Start PostgreSQL
 2. Run DB migrations for both `music_db` and `lyrics_db`
 3. Start `transcription-service` (health-checked at `/health` before dependants start)
-4. Start `music-service`, `lyrics-service`, and `gateway`
+4. Start `music-service`, `lyrics-service`, `gateway`, and `frontend`
 
 **Gateway is available at:** `http://localhost:9090`  
 **Frontend is available at:** `http://localhost:3000`  
@@ -201,6 +227,7 @@ Music_Player/
 │   └── requirements.txt
 │
 ├── frontend/                   # Static HTML frontend
+│   ├── Dockerfile              # Nginx image serving static files
 │   └── index.html
 │
 ├── postgres/
@@ -214,7 +241,6 @@ Music_Player/
 
 ## 📝 Notes
 
-- **RabbitMQ** variables exist in `.env` files but RabbitMQ is not currently wired into `docker-compose.yml`. This is scaffolding for a future async upload pipeline.
 - **Whisper model cache** is persisted in a Docker volume (`whisper_cache`) so it is not re-downloaded on every restart.
 - The `transcription-service` forces `language="en"` and uses `fp16=False` (CPU-safe). Switch to `fp16=True` for GPU inference.
 - `StreamMusic` uses `http.ServeContent` which handles HTTP `Range` requests, enabling seeking/scrubbing in the browser audio player.
