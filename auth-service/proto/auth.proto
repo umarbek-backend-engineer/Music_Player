@@ -2,12 +2,24 @@ syntax = "proto3";
 
 package auth;
 
-option go_package = "./proto/gen;pb";
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen;pb";
 
 service AuthService {
     rpc Register(RegisterRequest) returns (AuthResponse);
     rpc Login(LoginRequest) returns (AuthResponse);
     rpc Validate(ValidateRequest) returns (ValidateResponse);
+    rpc DeleteAccount(DeleteAccountRequest) returns (Empty);
+    rpc ResetPassword(ResetPasswordRequest) returns (AuthResponse);
+}
+
+message DeleteAccountRequest{
+    string id = 1;
+}
+
+message ResetPasswordRequest {
+    string id = 1;
+    string current_password = 2;
+    string new_password = 3;
 }
 
 message RegisterRequest {
@@ -34,3 +46,5 @@ message ValidateResponse {
     string user_id = 1;
     string role = 2;
 }
+
+message Empty {}

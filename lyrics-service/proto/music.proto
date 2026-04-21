@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package music;
 
-option go_package = "./proto/gen;pb";
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/lyrics-service/proto/gen;pb";
 
 service MusicService {
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);

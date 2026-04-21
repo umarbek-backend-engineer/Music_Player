@@ -3,10 +3,11 @@ package posgres
 import (
 	"context"
 	"fmt"
-	"lyrics-service/internal/config"
+
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/config"
 )
 
 func Connect() (*pgx.Conn, error) {

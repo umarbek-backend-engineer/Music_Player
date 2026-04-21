@@ -1,10 +1,10 @@
 package config
 
 import (
-	"lyrics-service/pkg/utils"
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/pkg/utils"
 )
 
 type Config struct {

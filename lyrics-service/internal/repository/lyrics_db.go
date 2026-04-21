@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"lyrics-service/internal/model"
-	"lyrics-service/internal/repository/posgres"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/model"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/repository/posgres"
 )
 
 // in this function I will check if the lyrics of the music exists If yes, it will return true, if no, it will return false

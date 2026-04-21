@@ -2,14 +2,18 @@ package handler
 
 import (
 	"bytes"
-	grpc_init "gin-server/internal/grpc_init"
-	"gin-server/pkg/utils"
-	pb "gin-server/proto/gen"
+
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
+	"google.golang.org/protobuf/types/known/emptypb"
+
+	grpc_init "github.com/umarbek-backend-engineer/Music_Player/gateway/internal/grpc_init"
+
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	pb "github.com/umarbek-backend-engineer/Music_Player/gateway/github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen"
 )
 
 // func UploadHandler(c *gin.Context, rb *modules.Rabbit) {
@@ -168,7 +172,7 @@ func ListMusic(c *gin.Context) {
 	// context of the browser
 	ctx := c.Request.Context()
 
-	res, err := grpc_init.MusicClient.ListMusic(ctx, &pb.Empty{})
+	res, err := grpc_init.MusicClient.ListMusic(ctx, &emptypb.Empty{})
 	if err != nil {
 		utils.Error(c, "Failed to list music", http.StatusInternalServerError, err)
 		return

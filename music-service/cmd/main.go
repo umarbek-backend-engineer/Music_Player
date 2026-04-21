@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"music-service/internal/config"
-	"music-service/internal/repository/db_connect"
-	"music-service/internal/service"
-	pb "music-service/proto/gen"
 	"net"
 
+	pb "github.com/umarbek-backend-engineer/Music_Player/music-service/github.com/umarbek-backend-engineer/Music_Player/music-service/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/config"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/repository/db_connect"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/service"
 	"google.golang.org/grpc"
 )
 

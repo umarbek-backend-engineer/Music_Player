@@ -5,10 +5,10 @@ import (
 	"context"
 	"io"
 	"log"
-	"lyrics-service/internal/repository"
-	"lyrics-service/pkg/utils"
-	pb "lyrics-service/proto/gen"
 
+	pb "github.com/umarbek-backend-engineer/Music_Player/lyrics-service/github.com/umarbek-backend-engineer/Music_Player/lyrics-service/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/repository"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/pkg/utils"
 	"google.golang.org/grpc"
 )
 

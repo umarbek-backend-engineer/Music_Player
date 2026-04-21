@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"music-service/internal/config"
-	"music-service/internal/repository"
-	"music-service/pkg/utils"
-	pb "music-service/proto/gen"
+
 	"os"
 	"path/filepath"
+
+	pb "github.com/umarbek-backend-engineer/Music_Player/music-service/github.com/umarbek-backend-engineer/Music_Player/music-service/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/config"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/repository"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/pkg/utils"
 )
 
 // func StartConsumer() error {

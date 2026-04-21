@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"gin-server/internal/grpc_init"
-	"gin-server/internal/modules"
-	"gin-server/pkg/utils"
-	pb "gin-server/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	pb "github.com/umarbek-backend-engineer/Music_Player/gateway/github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/internal/grpc_init"
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/internal/modules"
 )
 
 func AddLyrics(c *gin.Context) {

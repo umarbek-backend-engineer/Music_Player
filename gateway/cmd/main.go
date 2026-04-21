@@ -1,10 +1,12 @@
 package main
 
 import (
-	cgf "gin-server/internal/config"
-	grp "gin-server/internal/grpc_init"
-	"gin-server/internal/router"
+	cgf "github.com/umarbek-backend-engineer/Music_Player/gateway/internal/config"
+	grp "github.com/umarbek-backend-engineer/Music_Player/gateway/internal/grpc_init"
+
 	"log"
+
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/internal/router"
 )
 
 func main() {

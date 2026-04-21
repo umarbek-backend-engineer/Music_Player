@@ -2,11 +2,13 @@ syntax = "proto3";
 
 package lyrics;
 
-option go_package = "./proto/gen;pb";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen;pb";
 
 service LyricsService {
     rpc GetLyrics(GetLyricsRequest) returns (LyricsResponse);
-    rpc AddLyrics(AddLyricsRequest) returns (Empty);
+    rpc AddLyrics(AddLyricsRequest) returns (google.protobuf.Empty);
 }
 
 message GetLyricsRequest {
@@ -29,4 +31,3 @@ message AddLyricsRequest {
     string text = 2;
 }
 
-message Empty {}

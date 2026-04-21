@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"log"
-	"lyrics-service/internal/config"
-	"lyrics-service/internal/repository/posgres"
-	"lyrics-service/internal/service"
-	lyricspb "lyrics-service/proto/gen"
 	"net"
 
+	pb "github.com/umarbek-backend-engineer/Music_Player/lyrics-service/github.com/umarbek-backend-engineer/Music_Player/lyrics-service/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/config"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/repository/posgres"
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/service"
 	"google.golang.org/grpc"
 )
 
@@ -34,7 +34,7 @@ func main() {
 	// creating grpc server
 	gs := grpc.NewServer()
 
-	lyricspb.RegisterLyricsServiceServer(gs, &service.Server{})
+	pb.RegisterLyricsServiceServer(gs, &service.Server{})
 
 	// runnning the server
 	log.Println("Server is running on port: ", cgf.Api_Port)

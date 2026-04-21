@@ -2,12 +2,12 @@ syntax = "proto3";
 
 package music;
 
-import "lyrics.proto";
+import "google/protobuf/empty.proto";
 
-option go_package = "./proto/gen;pb";
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen;pb";
 
 service MusicService {
-    rpc ListMusic(lyrics.Empty) returns (ListResponse);
+    rpc ListMusic(google.protobuf.Empty) returns (ListResponse);
     rpc UploadMusic(stream UploadMusicChunks) returns (UploadMusicResponse);
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
 }

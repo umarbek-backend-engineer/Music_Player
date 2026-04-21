@@ -3,10 +3,11 @@ package db_connect
 import (
 	"context"
 	"fmt"
-	"music-service/internal/config"
+
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/config"
 )
 
 // creates posgres client

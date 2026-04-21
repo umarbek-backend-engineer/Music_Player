@@ -41,6 +41,18 @@ services:
       "up"
     ]
 
+  migrator-auth:
+    build: ./auth-service/migrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [
+      "-path=/migrations",
+      "-database=postgresql://docker:1241@postgres:5432/auth_db?sslmode=disable",
+      "up"
+    ]
+  
+
   # ------------------ SERVICES ------------------
 
   transcription-service:
@@ -61,6 +73,16 @@ services:
         reservations:
           devices:
             - capabilities: [gpu]
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "50053:50053"
+    env_file:
+      - ./auth-service/.env
+    depends_on:
+      migrator-auth:
+        condition: service_completed_successfully
 
   music-service:
     build: ./music-service

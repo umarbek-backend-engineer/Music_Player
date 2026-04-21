@@ -1,4 +1,4 @@
-module gin-server
+module github.com/umarbek-backend-engineer/Music_Player/gateway
 
 go 1.25.5
 
@@ -6,7 +6,6 @@ require (
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-gonic/gin v1.12.0
 	github.com/joho/godotenv v1.5.1
-	github.com/streadway/amqp v1.1.0
 	google.golang.org/grpc v1.80.0
 	google.golang.org/protobuf v1.36.11
 )

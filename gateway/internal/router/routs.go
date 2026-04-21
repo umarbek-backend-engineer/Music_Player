@@ -1,11 +1,11 @@
 package router
 
 import (
-	"gin-server/internal/handler"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/internal/handler"
 )
 
 func Route() *gin.Engine {

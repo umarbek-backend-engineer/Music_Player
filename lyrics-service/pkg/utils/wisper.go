@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"lyrics-service/internal/model"
+
 	"mime/multipart"
 	"net/http"
 	"time"
+
+	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/model"
 )
 
 func SendToWisper(data []byte, filename string) (model.Respond, error) {

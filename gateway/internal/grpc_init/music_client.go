@@ -1,10 +1,10 @@
 package grpc_init
 
 import (
-	"gin-server/internal/config"
-	pb "gin-server/proto/gen"
 	"log"
 
+	pb "github.com/umarbek-backend-engineer/Music_Player/gateway/github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/internal/config"
 	"google.golang.org/grpc"
 )
 

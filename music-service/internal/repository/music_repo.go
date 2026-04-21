@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"music-service/internal/model"
-	"music-service/internal/repository/db_connect"
-	pb "music-service/proto/gen"
+
+	pb "github.com/umarbek-backend-engineer/Music_Player/music-service/github.com/umarbek-backend-engineer/Music_Player/music-service/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/model"
+	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/repository/db_connect"
 )
 
 func UploadMusicDBHandler(ctx context.Context, filename, filepath string) error {

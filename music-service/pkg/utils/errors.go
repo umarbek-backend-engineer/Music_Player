@@ -28,5 +28,5 @@ func MapErrors(err error) error {
 	}
 
 	log.Println("Internal error: ", err)
-	return status.Error(codes.Internal, "Internal Server Error")
+	return status.Error(codes.Internal, "Internal Server Error: "+err.Error())
 }

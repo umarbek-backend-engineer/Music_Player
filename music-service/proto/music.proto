@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package music;
 
-option go_package = "./proto/gen;musicpb";
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/music-service/proto/gen;pb";
 
 service MusicService {
     rpc ListMusic(Empty) returns (ListResponse);
