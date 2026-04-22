@@ -9,6 +9,7 @@ package pb
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -425,7 +426,7 @@ var File_proto_auth_proto protoreflect.FileDescriptor
 
 const file_proto_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/auth.proto\x12\x04auth\"&\n" +
+	"\x10proto/auth.proto\x12\x04auth\x1a\x1bgoogle/protobuf/empty.proto\"&\n" +
 	"\x14DeleteAccountRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\"t\n" +
 	"\x14ResetPasswordRequest\x12\x0e\n" +
@@ -447,10 +448,11 @@ const file_proto_auth_proto_rawDesc = "" +
 	"\x10ValidateResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04role\"\a\n" +
-	"\x05Empty2\xab\x02\n" +
+	"\x05Empty2\xe5\x02\n" +
 	"\vAuthService\x125\n" +
 	"\bRegister\x12\x15.auth.RegisterRequest\x1a\x12.auth.AuthResponse\x12/\n" +
-	"\x05Login\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x129\n" +
+	"\x05Login\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x128\n" +
+	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x129\n" +
 	"\bValidate\x12\x15.auth.ValidateRequest\x1a\x16.auth.ValidateResponse\x128\n" +
 	"\rDeleteAccount\x12\x1a.auth.DeleteAccountRequest\x1a\v.auth.Empty\x12?\n" +
 	"\rResetPassword\x12\x1a.auth.ResetPasswordRequest\x1a\x12.auth.AuthResponseBLZJgithub.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen;pbb\x06proto3"
@@ -477,20 +479,23 @@ var file_proto_auth_proto_goTypes = []any{
 	(*ValidateRequest)(nil),      // 5: auth.ValidateRequest
 	(*ValidateResponse)(nil),     // 6: auth.ValidateResponse
 	(*Empty)(nil),                // 7: auth.Empty
+	(*emptypb.Empty)(nil),        // 8: google.protobuf.Empty
 }
 var file_proto_auth_proto_depIdxs = []int32{
 	2, // 0: auth.AuthService.Register:input_type -> auth.RegisterRequest
 	3, // 1: auth.AuthService.Login:input_type -> auth.LoginRequest
-	5, // 2: auth.AuthService.Validate:input_type -> auth.ValidateRequest
-	0, // 3: auth.AuthService.DeleteAccount:input_type -> auth.DeleteAccountRequest
-	1, // 4: auth.AuthService.ResetPassword:input_type -> auth.ResetPasswordRequest
-	4, // 5: auth.AuthService.Register:output_type -> auth.AuthResponse
-	4, // 6: auth.AuthService.Login:output_type -> auth.AuthResponse
-	6, // 7: auth.AuthService.Validate:output_type -> auth.ValidateResponse
-	7, // 8: auth.AuthService.DeleteAccount:output_type -> auth.Empty
-	4, // 9: auth.AuthService.ResetPassword:output_type -> auth.AuthResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	8, // 2: auth.AuthService.Logout:input_type -> google.protobuf.Empty
+	5, // 3: auth.AuthService.Validate:input_type -> auth.ValidateRequest
+	0, // 4: auth.AuthService.DeleteAccount:input_type -> auth.DeleteAccountRequest
+	1, // 5: auth.AuthService.ResetPassword:input_type -> auth.ResetPasswordRequest
+	4, // 6: auth.AuthService.Register:output_type -> auth.AuthResponse
+	4, // 7: auth.AuthService.Login:output_type -> auth.AuthResponse
+	8, // 8: auth.AuthService.Logout:output_type -> google.protobuf.Empty
+	6, // 9: auth.AuthService.Validate:output_type -> auth.ValidateResponse
+	7, // 10: auth.AuthService.DeleteAccount:output_type -> auth.Empty
+	4, // 11: auth.AuthService.ResetPassword:output_type -> auth.AuthResponse
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

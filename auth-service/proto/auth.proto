@@ -2,11 +2,14 @@ syntax = "proto3";
 
 package auth;
 
+import "google/protobuf/empty.proto";
+
 option go_package = "github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen;pb";
 
 service AuthService {
     rpc Register(RegisterRequest) returns (AuthResponse);
     rpc Login(LoginRequest) returns (AuthResponse);
+    rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
     rpc Validate(ValidateRequest) returns (ValidateResponse);
     rpc DeleteAccount(DeleteAccountRequest) returns (Empty);
     rpc ResetPassword(ResetPasswordRequest) returns (AuthResponse);

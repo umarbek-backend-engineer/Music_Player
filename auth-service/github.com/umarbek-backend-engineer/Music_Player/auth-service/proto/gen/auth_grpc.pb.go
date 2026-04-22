@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -21,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AuthService_Register_FullMethodName      = "/auth.AuthService/Register"
 	AuthService_Login_FullMethodName         = "/auth.AuthService/Login"
+	AuthService_Logout_FullMethodName        = "/auth.AuthService/Logout"
 	AuthService_Validate_FullMethodName      = "/auth.AuthService/Validate"
 	AuthService_DeleteAccount_FullMethodName = "/auth.AuthService/DeleteAccount"
 	AuthService_ResetPassword_FullMethodName = "/auth.AuthService/ResetPassword"
@@ -32,6 +34,7 @@ const (
 type AuthServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*AuthResponse, error)
+	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Validate(ctx context.Context, in *ValidateRequest, opts ...grpc.CallOption) (*ValidateResponse, error)
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*Empty, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*AuthResponse, error)
@@ -59,6 +62,16 @@ func (c *authServiceClient) Login(ctx context.Context, in *LoginRequest, opts ..
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AuthResponse)
 	err := c.cc.Invoke(ctx, AuthService_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthService_Logout_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,6 +114,7 @@ func (c *authServiceClient) ResetPassword(ctx context.Context, in *ResetPassword
 type AuthServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*AuthResponse, error)
 	Login(context.Context, *LoginRequest) (*AuthResponse, error)
+	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	Validate(context.Context, *ValidateRequest) (*ValidateResponse, error)
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*Empty, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*AuthResponse, error)
@@ -119,6 +133,9 @@ func (UnimplementedAuthServiceServer) Register(context.Context, *RegisterRequest
 }
 func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*AuthResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAuthServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
 }
 func (UnimplementedAuthServiceServer) Validate(context.Context, *ValidateRequest) (*ValidateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Validate not implemented")
@@ -182,6 +199,24 @@ func _AuthService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_Logout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Logout(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -254,6 +289,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _AuthService_Login_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _AuthService_Logout_Handler,
 		},
 		{
 			MethodName: "Validate",
