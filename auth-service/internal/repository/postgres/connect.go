@@ -13,6 +13,7 @@ func Connect() (*pgx.Conn, error) {
 
 	cgf := config.Load()
 
+	// connect to postgres 
 	postgreURL := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable", cgf.DB_user, cgf.DB_password, cgf.DB_host, cgf.DB_port, cgf.DB_name)
 	client, err := pgx.Connect(context.Background(), postgreURL)
 	if err != nil {
