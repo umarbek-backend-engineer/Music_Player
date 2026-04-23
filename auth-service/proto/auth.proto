@@ -13,7 +13,14 @@ service AuthService {
     rpc Validate(ValidateRequest) returns (ValidateResponse);
     rpc DeleteAccount(DeleteAccountRequest) returns (Empty);
     rpc ResetPassword(ResetPasswordRequest) returns (AuthResponse);
+
+    rpc Refresh(RefreshRequest) returns (AuthResponse);
 }
+
+message RefreshRequest {
+    string refresh_token = 1;
+}
+
 
 message DeleteAccountRequest{
     string id = 1;
@@ -29,7 +36,8 @@ message RegisterRequest {
     string name = 1;
     string lastname = 2;
     string email = 3;
-    string password = 4;
+    string role = 4;
+    string password = 5;
 }
 
 message LoginRequest {
@@ -38,7 +46,8 @@ message LoginRequest {
 }
 
 message AuthResponse {
-    string token =1;
+    string access_token =1;
+    string refresh_rokne = 2;
 }
 
 message ValidateRequest {
