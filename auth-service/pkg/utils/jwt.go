@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -38,5 +40,20 @@ func GenerateAccessJWT(id, role string) (string, error) {
 
 	// return the complete token
 	return signedToken, nil
+}
+
+// this function will generate a slice of bytes 256bite, which will be treated as refresh token
+func GenerateRefreshTokne() (string, error) {
+	// a slice of bytes
+	token := make([]byte, 32)
+
+	// fill the slice of bytes using rand.Read with random value and it makes our token
+	_, err := rand.Read(token)
+	if err != nil {
+		return "", err
+	}
+
+	// return the token and nill for an error
+	return base64.URLEncoding.EncodeToString(token), nil
 
 }

@@ -5,10 +5,13 @@ import (
 
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
 	"github.com/umarbek-backend-engineer/Music_Player/internal/repository"
+	"github.com/umarbek-backend-engineer/Music_Player/internal/repository/postgres"
 	"github.com/umarbek-backend-engineer/Music_Player/pkg/utils"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
+// A register function, user send request like name, email, role(default 'user'), password and the method will store this inside database
+// this function will return access_token and refresh_token
 func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.AuthResponse, error) {
 
 	// sending req.Password(string) to utils.PasswordHash fucntion, and get encoded password
@@ -32,11 +35,32 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Aut
 		return nil, utils.MapErrors(err)
 	}
 
+	// generate refresh tokenm
+	refreshToken, err := utils.GenerateRefreshTokne()
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// save refresh token in data base
+
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  token,
-		RefreshRokne: "Refresh_token",
+		RefreshRokne: refreshToken,
 	}, nil
+}
+
+// a crud operation which will save the refresh token inside the database and set exiration date
+func SaveRefreshToken(ctx context.Context, id, token string) error {
+	// connect to database
+	conn, err := postgres.Connect()
+	if err != nil {
+		return err
+	}
+	defer conn.Close(ctx)
+
+	_, err = conn.Exec(ctx, "insert into refresh_token () values ()")
+	
 }
 
 func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {
