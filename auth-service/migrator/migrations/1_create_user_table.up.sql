@@ -11,10 +11,12 @@ create table users (
     user_created_at timestamptz default now()
 );
 
-CREATE TABLE refresh_tokens (
+CREATE TABLE sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
     token_hash TEXT NOT NULL,
+    user_agent text,
+    ip_address text,
     expires_at TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     revoked BOOLEAN DEFAULT FALSE

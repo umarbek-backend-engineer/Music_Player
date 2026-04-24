@@ -5,6 +5,7 @@ import (
 
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
 	"github.com/umarbek-backend-engineer/Music_Player/internal/repository"
+	"github.com/umarbek-backend-engineer/Music_Player/internal/repository/postgres"
 	"github.com/umarbek-backend-engineer/Music_Player/pkg/utils"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -49,20 +50,37 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Aut
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  token,
-		RefreshRokne: refreshToken,
+		RefreshToken: refreshToken,
 	}, nil
 }
 
 func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {
+
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  "token",
-		RefreshRokne: "Refresh_token",
+		RefreshToken: "Refresh_token",
 	}, nil
 }
 
-func (s *Server) Logout(ctx context.Context, req *emptypb.Empty) (*emptypb.Empty, error) {
-	return &emptypb.Empty{}, nil
+func (s *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
+
+	refresh_token := req.GetRefreshToken()
+
+	// create the database client and close it after its usage
+	conn, err := postgres.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close(ctx)
+
+	// check if it exists and valid
+	tag, err := conn.Exec(ctx, "select * from sessions where refresh_token = $1", refresh_token)
+
+	// return response
+	return &pb.LogoutResponse{
+		Success: true,
+	}, nil
 }
 
 func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
@@ -80,7 +98,7 @@ func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  "token",
-		RefreshRokne: "Refresh_token",
+		RefreshToken: "Refresh_token",
 	}, nil
 }
 
@@ -88,6 +106,6 @@ func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthR
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  "token",
-		RefreshRokne: "Refresh_token",
+		RefreshToken: "Refresh_token",
 	}, nil
 }
