@@ -2,7 +2,9 @@ package utils
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -56,4 +58,11 @@ func GenerateRefreshTokne() (string, error) {
 	// return the token and nill for an error
 	return base64.URLEncoding.EncodeToString(token), nil
 
+}
+
+// this function will encode the token
+func HashToken(token string) string {
+
+	hashToken := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hashToken[:])
 }

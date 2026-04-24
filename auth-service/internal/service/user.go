@@ -5,7 +5,6 @@ import (
 
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
 	"github.com/umarbek-backend-engineer/Music_Player/internal/repository"
-	"github.com/umarbek-backend-engineer/Music_Player/internal/repository/postgres"
 	"github.com/umarbek-backend-engineer/Music_Player/pkg/utils"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -41,26 +40,17 @@ func (s *Server) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.Aut
 		return nil, utils.MapErrors(err)
 	}
 
+	// hash the token befor saving it inside database for more security
+	hashed_refresh_token := utils.HashToken(token)
+
 	// save refresh token in data base
+	err = repository.InsertRefreshToken(ctx, id, hashed_refresh_token)
 
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  token,
 		RefreshRokne: refreshToken,
 	}, nil
-}
-
-// a crud operation which will save the refresh token inside the database and set exiration date
-func SaveRefreshToken(ctx context.Context, id, token string) error {
-	// connect to database
-	conn, err := postgres.Connect()
-	if err != nil {
-		return err
-	}
-	defer conn.Close(ctx)
-
-	_, err = conn.Exec(ctx, "insert into refresh_token () values ()")
-	
 }
 
 func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthResponse, error) {
@@ -82,8 +72,8 @@ func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Val
 	}, nil
 }
 
-func (s *Server) DeleteAccount(ctx context.Context, req *pb.DeleteAccountRequest) (*pb.Empty, error) {
-	return &pb.Empty{}, nil
+func (s *Server) DeleteAccount(ctx context.Context, req *pb.DeleteAccountRequest) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest) (*pb.AuthResponse, error) {
