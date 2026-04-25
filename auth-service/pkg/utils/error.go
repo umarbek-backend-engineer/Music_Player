@@ -7,14 +7,18 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// errors 
+// errors
 var (
-	ErrExistingEmail = errors.New("User already exists with the same email")
+	ErrExistingEmail   = errors.New("User already exists with the same email")
+	ErrInvalidPassword = errors.New("Invalid Password")
+	ErrMetaData        = errors.New("Invalid MetaData")
 )
 
 // a map error which will store the variable as a key and code as a value in the map
 var mapError = map[error]codes.Code{
-	ErrExistingEmail: codes.InvalidArgument,
+	ErrExistingEmail:   codes.InvalidArgument,
+	ErrInvalidPassword: codes.InvalidArgument,
+	ErrMetaData:        codes.InvalidArgument,
 }
 
 func MapErrors(err error) error {
@@ -24,5 +28,5 @@ func MapErrors(err error) error {
 		}
 	}
 	// if the condition of the map error do not match, it will return default which  is internal + error.Error()
-	return status.Error(codes.Internal ,"Internal Server Error: " + err.Error())
+	return status.Error(codes.Internal, "Internal Server Error: "+err.Error())
 }
