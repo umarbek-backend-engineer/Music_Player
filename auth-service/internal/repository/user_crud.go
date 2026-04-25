@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
 	"github.com/umarbek-backend-engineer/Music_Player/internal/repository/postgres"
@@ -34,11 +35,11 @@ func RegisterDBCrud(ctx context.Context, req *pb.RegisterRequest) (string, error
 }
 
 // the crud function of the logout method which will delete the session row where passing refresh token matches
-func LogoutCrud(ctx context.Context, hashtoken string) (*pb.LogoutResponse, error) {
+func LogoutCrud(ctx context.Context, hashtoken string) error {
 	// create the database client and close it after its usage
 	conn, err := postgres.Connect()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer conn.Close(ctx)
 
@@ -46,9 +47,33 @@ func LogoutCrud(ctx context.Context, hashtoken string) (*pb.LogoutResponse, erro
 	// check if it exists and valid, and return 1 which is true
 	err = conn.QueryRow(ctx, "delete from sessions where refresh_token = $1", hashtoken).Scan(&exists)
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
 	}
-	return nil, nil
+	return nil
+}
+
+// delete accoutn crud operations function, it will delete user row where id matrches
+func DeleAccountCrud(ctx context.Context, id string) error {
+	// create db client
+	conn, err := postgres.Connect()
+	if err != nil {
+		return err
+	}
+	// close the client after usage
+	defer conn.Close(ctx)
+
+	// Query which will delete the row of the user with that id
+	_, err = conn.Exec(ctx, "delete from users where id = $1", id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil
+		}
+		return err
+	}
+	return nil
 }
 
 // crud operations of the logIn method, from the given email it will return user_id, role, and saved password

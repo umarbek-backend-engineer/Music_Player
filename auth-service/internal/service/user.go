@@ -111,9 +111,9 @@ func (s *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutR
 	hashtoken := utils.HashToken(req.RefreshToken)
 
 	// delete the row where the refresh token matches
-	result, err := repository.LogoutCrud(ctx, hashtoken)
+	err := repository.LogoutCrud(ctx, hashtoken)
 	if err != nil {
-		return result, utils.MapErrors(err)
+		return nil, utils.MapErrors(err)
 	}
 
 	// return response
@@ -131,6 +131,13 @@ func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Val
 
 func (s *Server) DeleteAccount(ctx context.Context, req *pb.DeleteAccountRequest) (*emptypb.Empty, error) {
 
+	// delete accoutn crud operations, it will delete user row where id matrches
+	err := repository.DeleAccountCrud(ctx, req.GetId())
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// return an error
 	return &emptypb.Empty{}, nil
 }
 
