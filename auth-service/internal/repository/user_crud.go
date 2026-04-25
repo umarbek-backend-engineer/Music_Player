@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
 	"github.com/umarbek-backend-engineer/Music_Player/internal/repository/postgres"
@@ -53,6 +54,42 @@ func LogoutCrud(ctx context.Context, hashtoken string) error {
 		return err
 	}
 	return nil
+}
+
+func RefreshTokenCrud(ctx context.Context, hashed_refresh_token string) (string, string, error) {
+	// create database client
+	conn, err := postgres.Connect()
+	if err != nil {
+		return "", "", err
+	}
+	// close the client after usage
+	defer conn.Close(ctx)
+
+	// initialize the needed variable
+	var user_id string
+	var role string
+	var expires_at time.Time
+	var revoked bool
+
+	// find the session
+	err = conn.QueryRow(ctx, "select s.user_id, s.expires_at, s.revoked, u.role from sessions s join users u on s.user_id = u.id where s.token_hash = $1", hashed_refresh_token).Scan(
+		&user_id,
+		&expires_at,
+		&role,
+		&revoked,
+	)
+	if err != nil {
+		return "", "", err
+	}
+
+	// Validate session:
+	// - if revoked = true → error
+	// - if expires_at < now() → error
+
+	if revoked && time.Now().Unix() > expires_at.Unix() {
+		return "", "", err
+	}
+	return user_id, role, nil
 }
 
 // delete accoutn crud operations function, it will delete user row where id matrches

@@ -16,7 +16,7 @@ func InsertRefreshToken(ctx context.Context, id, token, user_agent, ip_address s
 	}
 	defer conn.Close(ctx)
 
-	// makein a menual expiration time for refresh token
+	// makeing a menual expiration time for refresh token
 	expires_at := time.Now().Add(time.Hour * 168)
 
 	// giving the query to database to save the refresh token in database
@@ -37,7 +37,7 @@ func UpdateRefreshToken(ctx context.Context, id, token string) error {
 	}
 	defer conn.Close(ctx)
 
-	// makein a menual expiration time for refresh token
+	// makeing a menual expiration time for refresh token
 	expires_at := time.Now().Add(time.Hour * 168)
 
 	// giving the query to database to save the refresh token in database

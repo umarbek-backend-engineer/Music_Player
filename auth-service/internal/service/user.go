@@ -122,34 +122,62 @@ func (s *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutR
 	}, nil
 }
 
+// in this method the gateway send id of the user and based on id it will delete the row  in database
+func (s *Server) DeleteAccount(ctx context.Context, req *pb.DeleteAccountRequest) (*emptypb.Empty, error) {
+	// delete accoutn crud operations, it will delete user row where id matrches
+	err := repository.DeleAccountCrud(ctx, req.GetId())
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+	// return an error
+	return &emptypb.Empty{}, nil
+}
+
+func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthResponse, error) {
+
+	// Get refresh and hash the token
+	hashed_refresh_token := utils.HashToken(req.GetRefreshToken())
+
+	// create db client
+	id, role, err := repository.RefreshTokenCrud(ctx, hashed_refresh_token)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// generate new access token
+	accessToken, err := utils.GenerateAccessJWT(id, role)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// generate new refresh token
+	refreshToken, err := utils.GenerateRefreshTokne()
+
+	// hash the new refersh token
+	hashed_refresh_token = utils.HashToken(refreshToken)
+
+	// update the old session and insert new one
+	err = repository.UpdateRefreshToken(ctx, id, hashed_refresh_token)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// returning the response
+	return &pb.AuthResponse{
+		AccessToken:  accessToken,
+		RefreshToken: "Refresh_token",
+	}, nil
+}
+
 func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
+	//returning the response
 	return &pb.ValidateResponse{
 		UserId: "user_001",
 		Role:   "Admin",
 	}, nil
 }
 
-func (s *Server) DeleteAccount(ctx context.Context, req *pb.DeleteAccountRequest) (*emptypb.Empty, error) {
-
-	// delete accoutn crud operations, it will delete user row where id matrches
-	err := repository.DeleAccountCrud(ctx, req.GetId())
-	if err != nil {
-		return nil, utils.MapErrors(err)
-	}
-
-	// return an error
-	return &emptypb.Empty{}, nil
-}
-
 func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest) (*pb.AuthResponse, error) {
-	// returning the response
-	return &pb.AuthResponse{
-		AccessToken:  "token",
-		RefreshToken: "Refresh_token",
-	}, nil
-}
-
-func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthResponse, error) {
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  "token",
