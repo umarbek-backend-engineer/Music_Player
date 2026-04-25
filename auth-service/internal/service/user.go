@@ -170,6 +170,9 @@ func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthR
 }
 
 func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
+
+	
+
 	//returning the response
 	return &pb.ValidateResponse{
 		UserId: "user_001",
@@ -178,6 +181,9 @@ func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Val
 }
 
 func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest) (*pb.AuthResponse, error) {
+
+
+
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  "token",
