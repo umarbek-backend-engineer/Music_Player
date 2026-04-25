@@ -9,16 +9,18 @@ import (
 
 // errors
 var (
-	ErrExistingEmail   = errors.New("User already exists with the same email")
-	ErrInvalidPassword = errors.New("Invalid Password")
-	ErrMetaData        = errors.New("Invalid MetaData")
+	ErrExistingEmail    = errors.New("User already exists with the same email")
+	ErrInvalidPassword  = errors.New("Invalid Password")
+	ErrMetaData         = errors.New("Invalid MetaData")
+	ErrUserDoesNotExist = errors.New("User does not exists")
 )
 
 // a map error which will store the variable as a key and code as a value in the map
 var mapError = map[error]codes.Code{
-	ErrExistingEmail:   codes.InvalidArgument,
-	ErrInvalidPassword: codes.InvalidArgument,
-	ErrMetaData:        codes.InvalidArgument,
+	ErrExistingEmail:    codes.InvalidArgument,
+	ErrInvalidPassword:  codes.InvalidArgument,
+	ErrMetaData:         codes.InvalidArgument,
+	ErrUserDoesNotExist: codes.InvalidArgument,
 }
 
 func MapErrors(err error) error {

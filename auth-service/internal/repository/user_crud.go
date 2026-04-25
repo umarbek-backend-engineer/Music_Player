@@ -7,6 +7,7 @@ import (
 
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
 	"github.com/umarbek-backend-engineer/Music_Player/internal/repository/postgres"
+	"github.com/umarbek-backend-engineer/Music_Player/pkg/utils"
 )
 
 // crud operation of the register method it will saved the req information inside the database and will return id
@@ -54,6 +55,53 @@ func LogoutCrud(ctx context.Context, hashtoken string) error {
 		return err
 	}
 	return nil
+}
+
+func ResetPasswordCrud(ctx context.Context, user_id string, currentPassword string, newpassword string) (string, error) {
+
+	var dbPassword string
+	var role string
+	// connect Database
+	conn, err := postgres.Connect()
+	if err != nil {
+		return "", err
+	}
+	// close the client after usage
+	defer conn.Close(ctx)
+
+	// Get user password from DB by ID
+	err = conn.QueryRow(ctx, "select password from users where id = $1", user_id).Scan(&dbPassword)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", utils.ErrUserDoesNotExist
+		}
+		return "", err
+	}
+
+	// if db and current passwords match it will not return err
+	err = utils.VerifyPassword(currentPassword, dbPassword)
+
+	// hash the new password to save into database
+	hashedPassword, err := utils.PasswordHash(newpassword)
+	if err != nil {
+		return "", err
+	}
+
+	// update the password and set time now for password_changed_at
+	err = conn.QueryRow(ctx, "update users set password = $1, password_changed_at = now() where id = $2 returning role", hashedPassword, user_id).Scan(&role)
+	if err != nil {
+		return "", err
+	}
+
+	// delete all sessions based on user_id
+	_, err = conn.Exec(ctx, "delete from sessions where user_id = $1", user_id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return role, nil
+		}
+		return "", err
+	}
+	return role, nil
 }
 
 func RefreshTokenCrud(ctx context.Context, hashed_refresh_token string) (string, string, error) {

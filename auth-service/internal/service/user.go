@@ -133,6 +133,7 @@ func (s *Server) DeleteAccount(ctx context.Context, req *pb.DeleteAccountRequest
 	return &emptypb.Empty{}, nil
 }
 
+// The method refreshed the token expiration date in sessions table
 func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthResponse, error) {
 
 	// Get refresh and hash the token
@@ -171,7 +172,21 @@ func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthR
 
 func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
 
-	
+	// get the access token from the request
+	token := req.GetToken()
+
+	// 2. Parse and verify JWT
+	// - check signature
+	// - check expiration
+	// - extract claims (user_id, role)
+
+	// 3. If token is invalid or expired → return error
+
+	// 4. Optional (advanced):
+	// - check if user still exists in DB
+	// - check password_changed_at (invalidate old tokens)
+
+	// 5. Return user info from token claims
 
 	//returning the response
 	return &pb.ValidateResponse{
@@ -182,11 +197,61 @@ func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.Val
 
 func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest) (*pb.AuthResponse, error) {
 
+	// get the header information (user_agen and ip_address)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, utils.MapErrors(fmt.Errorf("Failed to get incoming request"))
+	}
 
+	// initialize variable
+	user_agent := ""
+	ip_address := ""
+
+	if v := md.Get("user_agent"); len(v) > 0 {
+		user_agent = v[0]
+	}
+	if v := md.Get("ip_address"); len(v) > 0 {
+		ip_address = v[0]
+	}
+
+	// check if metadata has been sent. if no return error
+	if user_agent == "" && ip_address == "" {
+		return nil, utils.ErrMetaData
+	}
+
+	// get inputs
+	user_id := req.GetId()
+	currentPassword := req.GetCurrentPassword()
+	newpassword := req.GetNewPassword()
+
+	// update the password and delete all the old sessions
+	role, err := repository.ResetPasswordCrud(ctx, user_id, currentPassword, newpassword)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// generate tokens
+	token, err := utils.GenerateAccessJWT(user_id, role)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+	ref_token, err := utils.GenerateRefreshTokne()
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// hash the ref_token
+	hashed_refresh_token := utils.HashToken(ref_token)
+
+	// store the refresh token
+	err = repository.InsertRefreshToken(ctx, user_id, hashed_refresh_token, user_agent, ip_address)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
 
 	// returning the response
 	return &pb.AuthResponse{
-		AccessToken:  "token",
-		RefreshToken: "Refresh_token",
+		AccessToken:  token,
+		RefreshToken: hashed_refresh_token,
 	}, nil
 }
