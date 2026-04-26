@@ -20,6 +20,7 @@ func main() {
 
 	grp.InitMusicGRPC()
 	grp.InitLyricsGRPC()
+	grp.InitauthGRPC()
 
 	port := cgf.Load().Api_Port
 

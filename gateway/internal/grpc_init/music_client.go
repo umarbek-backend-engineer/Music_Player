@@ -11,11 +11,15 @@ import (
 var MusicClient pb.MusicServiceClient
 
 func InitMusicGRPC() {
+
+	// load the config file
 	cgf := config.Load()
-	conn, err := grpc.Dial(cgf.Grpc_host+":"+cgf.Grpc_music_service_port, grpc.WithInsecure())
+	// create a client of that service(connect)
+	conn, err := grpc.Dial(cgf.Grpc_musci_service_host+":"+cgf.Grpc_music_service_port, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("Failed to connect: ", err)
 	}
 
+	// assign the client to ther variable
 	MusicClient = pb.NewMusicServiceClient(conn)
 }
