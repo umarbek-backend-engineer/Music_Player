@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/golang-jwt/jwt/v5"
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/internal/config"
 	"github.com/umarbek-backend-engineer/Music_Player/internal/repository"
 	"github.com/umarbek-backend-engineer/Music_Player/pkg/utils"
 	"google.golang.org/grpc/metadata"
@@ -172,26 +174,56 @@ func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthR
 
 func (s *Server) Validate(ctx context.Context, req *pb.ValidateRequest) (*pb.ValidateResponse, error) {
 
+	// loading config ile
+	cgf := config.Load()
+
 	// get the access token from the request
-	token := req.GetToken()
+	tokenStr := req.GetToken()
 
-	// 2. Parse and verify JWT
-	// - check signature
-	// - check expiration
-	// - extract claims (user_id, role)
+	// Parse and verify JWT
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		// - check signature
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected Signed Method")
+		}
 
-	// 3. If token is invalid or expired → return error
+		// - extract claims (user_id, role)
+		return []byte(cgf.JWT_key), nil
+	})
 
-	// 4. Optional (advanced):
-	// - check if user still exists in DB
-	// - check password_changed_at (invalidate old tokens)
+	// handler parsed token
+	if err != nil {
+		return nil, err
+	}
+
+	// If token is invalid or expired → return error
+	if !token.Valid {
+		return nil, utils.ErrInvalidToken
+	}
 
 	// 5. Return user info from token claims
 
+	cliams, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, utils.ErrInvalidToken
+	}
+
+	// extract user_id
+	user_id, ok := cliams["user_id"].(string)
+	if !ok {
+		return nil, utils.ErrInvalidToken
+	}
+
+	// extract user_role
+	role, ok := cliams["role"].(string)
+	if !ok {
+		return nil, utils.ErrInvalidToken
+	}
+
 	//returning the response
 	return &pb.ValidateResponse{
-		UserId: "user_001",
-		Role:   "Admin",
+		UserId: user_id,
+		Role:   role,
 	}, nil
 }
 

@@ -13,6 +13,7 @@ var (
 	ErrInvalidPassword  = errors.New("Invalid Password")
 	ErrMetaData         = errors.New("Invalid MetaData")
 	ErrUserDoesNotExist = errors.New("User does not exists")
+	ErrInvalidToken     = errors.New("Invalid Token")
 )
 
 // a map error which will store the variable as a key and code as a value in the map
@@ -21,6 +22,7 @@ var mapError = map[error]codes.Code{
 	ErrInvalidPassword:  codes.InvalidArgument,
 	ErrMetaData:         codes.InvalidArgument,
 	ErrUserDoesNotExist: codes.InvalidArgument,
+	ErrInvalidToken:     codes.Unauthenticated,
 }
 
 func MapErrors(err error) error {

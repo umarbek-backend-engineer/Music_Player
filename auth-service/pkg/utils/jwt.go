@@ -25,7 +25,7 @@ func GenerateAccessJWT(id, role string) (string, error) {
 
 	// jwt content
 	claims := jwt.MapClaims{
-		"uuid":      id,
+		"user_id":   id,
 		"role":      role,
 		"exp":       jwt.NewNumericDate(time.Now().Add(duration)).Unix(),
 		"issued_at": jwt.NewNumericDate(time.Now()).Unix(),
