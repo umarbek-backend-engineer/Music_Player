@@ -34,8 +34,8 @@ func Route() *gin.Engine {
 	r.GET("/lyrics/:id", handler.GetLyrics)
 
 	// authentication
-	r.POST("/auth/register")
-	r.POST("/auth/login")
+	r.POST("/auth/register", handler.Register)
+	r.POST("/auth/login", handler.LogIn)
 	r.POST("/auth/logout")
 	r.POST("/auth/refresh")
 	r.POST("/auth/validate")

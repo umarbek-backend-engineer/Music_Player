@@ -55,10 +55,10 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRespo
 	user_agent := ""
 	ip_address := ""
 
-	if v := md.Get("user_agent"); len(v) > 0 {
+	if v := md.Get("user-agent"); len(v) > 0 {
 		user_agent = v[0]
 	}
-	if v := md.Get("ip_address"); len(v) > 0 {
+	if v := md.Get("ip-address"); len(v) > 0 {
 		ip_address = v[0]
 	}
 
