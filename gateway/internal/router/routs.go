@@ -24,12 +24,23 @@ func Route() *gin.Engine {
 		c.JSON(200, gin.H{"status": "gateway is running"})
 	})
 
+	// music
 	r.POST("/music", handler.Upload)
 	r.GET("/music", handler.ListMusic)
 	r.GET("/music/:id", handler.StreamMusic)
 
+	// lyrics
 	r.POST("/lyrics", handler.AddLyrics)
 	r.GET("/lyrics/:id", handler.GetLyrics)
+
+	// authentication
+	r.POST("/auth/register")
+	r.POST("/auth/login")
+	r.POST("/auth/logout")
+	r.POST("/auth/refresh")
+	r.POST("/auth/validate")
+	r.POST("/auth/resetpassword")
+	r.POST("/auth/deleteaccount")
 
 	return r
 }

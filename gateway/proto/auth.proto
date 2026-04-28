@@ -4,7 +4,7 @@ package auth;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen;pb";
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen;pb";
 
 service AuthService {
     rpc Register(RegisterRequest) returns (RegisterResponse);
