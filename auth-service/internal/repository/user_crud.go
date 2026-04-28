@@ -23,7 +23,7 @@ func RegisterDBCrud(ctx context.Context, req *pb.RegisterRequest) (string, error
 	var id string
 	// the query will save the information into the table users in database and return id of the inserted row
 	// the id will be stored in id variable
-	err = conn.QueryRow(ctx, "insert into users (name, lastname, email, role, password) values ($1,$2,$3,$4,$5, $6) returning id",
+	err = conn.QueryRow(ctx, "insert into users (name, lastname, email, role, password) values ($1,$2,$3,$4,$5) returning id",
 		req.Name,
 		req.Lastname,
 		req.Email,

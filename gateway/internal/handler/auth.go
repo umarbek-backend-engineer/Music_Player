@@ -61,12 +61,18 @@ func LogIn(c *gin.Context) {
 	}
 
 	// pass your request to the gRPC service
-	logInResponse, err := grpc_init.AuthClient.Login(ctx, &logInRequest)
+	resp, err := grpc_init.AuthClient.Login(ctx, &logInRequest)
 	if err != nil {
 		utils.Error(c, "Failed to pass the request", http.StatusBadGateway, err)
 		return
 	}
 
+	// set cookies
+	c.SetSameSite(http.SameSiteLaxMode)
+
+	c.SetCookie("access_token", resp.AccessToken, 3600, "/", "localhost", false, true)
+	c.SetCookie("refresh_token", resp.RefreshToken, 1296000, "/", "localhost", false, true)
+
 	// pass the response to the user
-	c.JSON(200, logInResponse)
+	c.JSON(200, resp)
 }
