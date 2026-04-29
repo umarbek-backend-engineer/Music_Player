@@ -128,3 +128,35 @@ func DeleteAccount(c *gin.Context) {
 		"message": "Log in successfully",
 	})
 }
+
+func ResetPassword(c *gin.Context) {
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	// get the request body
+	var RestPassword pb.ResetPasswordRequest
+	err := c.BindJSON(&RestPassword)
+	if err != nil {
+		utils.Error(c, "failed to get requst body", http.StatusBadRequest, err)
+		return
+	}
+
+	// send the request to the auth-service
+	resp, err := grpc_init.AuthClient.ResetPassword(ctx, &RestPassword)
+	if err != nil {
+		utils.Error(c, "Internal Error in auth-service", http.StatusBadGateway, err)
+		return
+	}
+
+	// set cookies
+	c.SetSameSite(http.SameSiteLaxMode)
+
+	c.SetCookie("access_token", resp.AccessToken, 3600, "/", "", false, true)
+	c.SetCookie("refresh_token", resp.RefreshToken, 1296000, "/", "", false, true)
+
+	// pass the response to the user
+	c.JSON(200, gin.H{
+		"message": "Success",
+	})
+}

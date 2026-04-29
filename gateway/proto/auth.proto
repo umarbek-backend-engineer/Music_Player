@@ -13,7 +13,6 @@ service AuthService {
     rpc Validate(ValidateRequest) returns (ValidateResponse);
     rpc DeleteAccount(DeleteAccountRequest) returns (google.protobuf.Empty);
     rpc ResetPassword(ResetPasswordRequest) returns (AuthResponse);
-
     rpc Refresh(RefreshRequest) returns (AuthResponse);
 }
 
