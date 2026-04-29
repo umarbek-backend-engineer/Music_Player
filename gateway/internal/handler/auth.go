@@ -79,6 +79,34 @@ func LogIn(c *gin.Context) {
 	})
 }
 
+func LogOut(c *gin.Context) {
+	// get the user request
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	// get the refresh token from the cookies
+	refresh_Token, err := c.Cookie("refresh_token")
+	if err != nil {
+		utils.Error(c, "Failed to get refresh token", http.StatusUnauthorized, err)
+	}
+
+	// send the request to the auth-service
+	resp, err := grpc_init.AuthClient.Logout(ctx, &pb.LogoutRequest{RefreshToken: refresh_Token})
+	if err != nil {
+		utils.Error(c, "Internal Error in auth-service", http.StatusBadGateway, err)
+		return
+	}
+
+	// delete the token from cookies
+	c.SetCookie("access_token", "", 0, "/", "", false, true)
+	c.SetCookie("refresh_token", "", 0, "/", "", false, true)
+
+	// return the response to the user
+	c.JSON(200, gin.H{
+		"log out": resp.Success,
+	})
+}
+
 func DeleteAccount(c *gin.Context) {
 
 	// get the request context with timeout of 10 seconds

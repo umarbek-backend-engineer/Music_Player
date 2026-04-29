@@ -36,7 +36,7 @@ func Route() *gin.Engine {
 	// authentication
 	r.POST("/auth/register", handler.Register)
 	r.POST("/auth/login", handler.LogIn)
-	r.POST("/auth/logout")
+	r.POST("/auth/logout", handler.LogOut)
 	r.POST("/auth/refresh")
 	r.POST("/auth/validate")
 	r.POST("/auth/resetpassword")
