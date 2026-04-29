@@ -29,7 +29,7 @@ func Register(c *gin.Context) {
 	// pass your request to the gRPC service
 	resp, err := grpc_init.AuthClient.Register(ctx, &request)
 	if err != nil {
-		utils.Error(c, "Failed to conenct the client", http.StatusBadGateway, err)
+		utils.Error(c, "Internal Error in auth-service", http.StatusBadGateway, err)
 		return
 	}
 
@@ -63,7 +63,7 @@ func LogIn(c *gin.Context) {
 	// pass your request to the gRPC service
 	resp, err := grpc_init.AuthClient.Login(ctx, &logInRequest)
 	if err != nil {
-		utils.Error(c, "Failed to pass the request", http.StatusBadGateway, err)
+		utils.Error(c, "Internal Error in auth-service", http.StatusBadGateway, err)
 		return
 	}
 

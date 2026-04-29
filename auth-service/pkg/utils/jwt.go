@@ -32,7 +32,8 @@ func GenerateAccessJWT(id, role string) (string, error) {
 	}
 
 	// making token with all the claims + defining the signing method
-	token := jwt.NewWithClaims(jwt.SigningMethodPS256, claims)
+	// token := jwt.NewWithClaims(jwt.SigningMethodPS256, claims) // error rpc error: code = Internal desc = Internal Server Error: key is of invalid type: RSA-PSS sign expects *rsa.PrivateKey
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// signing the token with the secret key
 	signedToken, err := token.SignedString([]byte(cgf.JWT_key))

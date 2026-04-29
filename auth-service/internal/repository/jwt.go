@@ -29,7 +29,7 @@ func InsertRefreshToken(ctx context.Context, id, token, user_agent, ip_address s
 	expires_at := time.Now().Add(duration)
 
 	// giving the query to database to save the refresh token in database
-	_, err = conn.Exec(ctx, "insert into sessions (user_id, token_hash, user_agent, ip_address, expires_at) values ($1,$2,$3)", id, token, user_agent, ip_address, expires_at)
+	_, err = conn.Exec(ctx, "insert into sessions (user_id, token_hash, user_agent, ip_address, expires_at) values ($1,$2,$3,$4,$5)", id, token, user_agent, ip_address, expires_at)
 	if err != nil {
 		return err
 	}
