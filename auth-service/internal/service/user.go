@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/golang-jwt/jwt/v5"
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
@@ -70,7 +69,7 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRespo
 	// get id, role, saved password where email matches from database
 	id, role, dbpassword, err := repository.LogInCrud(ctx, req.Email)
 	if err != nil {
-		
+
 		return nil, utils.MapErrors(err)
 	}
 
