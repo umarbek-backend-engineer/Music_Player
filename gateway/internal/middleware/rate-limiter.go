@@ -1,10 +1,10 @@
-package auth
+package middleware
 
 import (
-	"net"
-	"net/http"
 	"sync"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // each visitor info
@@ -48,27 +48,10 @@ func (r *rateLimiter) Cleaup() {
 	}
 }
 
-// helper to extract IP correctly
-func getIp(r *http.Request) string {
-	// check proxy header first
-	ip := r.Header.Get("X-Forwarded-For")
-	if ip != "" {
-		return ip
-	}
-
-	// fallback to remote addr
-	host, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		return r.RemoteAddr
-	}
-
-	return host
-}
-
-func (rl *rateLimiter) Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (rl *rateLimiter) Middleware() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
 		// get the user ip  address
-		ip := getIp(r)
+		ip := ctx.ClientIP()
 
 		rl.mu.Lock()
 
@@ -91,11 +74,13 @@ func (rl *rateLimiter) Middleware(next http.Handler) http.Handler {
 		// if the v.count is has reached the limit the Middleware will give an errro too many requests
 		if v.count > rl.limit {
 			rl.mu.Unlock()
-			http.Error(w, "Too many request", http.StatusTooManyRequests)
+			ctx.AbortWithStatusJSON(429, gin.H{
+				"error": "too many requests",
+			})
 			return
 		}
 
 		rl.mu.Unlock()
-		next.ServeHTTP(w, r)
-	})
+		ctx.Next()
+	}
 }

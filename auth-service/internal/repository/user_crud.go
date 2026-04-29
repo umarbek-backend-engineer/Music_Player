@@ -3,6 +3,8 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
 
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
@@ -31,6 +33,9 @@ func RegisterDBCrud(ctx context.Context, req *pb.RegisterRequest) (string, error
 		req.Password,
 	).Scan(&id)
 	if err != nil {
+		if strings.Contains(err.Error(), "ERROR: duplicate key value violates unique constraint \"users_email_key\" (SQLSTATE 23505)") {
+			return "", fmt.Errorf("User with that email already exists")
+		}
 		return "", err
 	}
 	return id, nil

@@ -1,4 +1,4 @@
-package auth
+package middleware
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func Authentication() gin.HandlerFunc {
 		// get the access token from the cookies
 		access_token, err := c.Cookie("access_token")
 		if err != nil {
-			utils.Error(c, "Missing token", http.StatusUnauthorized, err)
+			utils.Error(c, "Missing access token", http.StatusUnauthorized, err)
 			return
 		}
 
