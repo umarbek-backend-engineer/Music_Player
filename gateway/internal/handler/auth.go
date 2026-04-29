@@ -34,7 +34,7 @@ func Register(c *gin.Context) {
 	}
 
 	// give the reponse
-	c.JSON(200, resp)
+	c.ShouldBind(resp)
 }
 
 func LogIn(c *gin.Context) {
@@ -74,7 +74,7 @@ func LogIn(c *gin.Context) {
 	c.SetCookie("refresh_token", resp.RefreshToken, 1296000, "/", "", false, true)
 
 	// pass the response to the user
-	c.JSON(200, gin.H{
+	c.ShouldBind(gin.H{
 		"message": "Log in successfully",
 	})
 }
@@ -88,6 +88,7 @@ func LogOut(c *gin.Context) {
 	refresh_Token, err := c.Cookie("refresh_token")
 	if err != nil {
 		utils.Error(c, "Failed to get refresh token", http.StatusUnauthorized, err)
+		return
 	}
 
 	// send the request to the auth-service
@@ -102,7 +103,7 @@ func LogOut(c *gin.Context) {
 	c.SetCookie("refresh_token", "", 0, "/", "", false, true)
 
 	// return the response to the user
-	c.JSON(200, gin.H{
+	c.ShouldBind(gin.H{
 		"log out": resp.Success,
 	})
 }
@@ -124,8 +125,8 @@ func DeleteAccount(c *gin.Context) {
 	}
 
 	// pass the response to the user
-	c.JSON(200, gin.H{
-		"message": "Log in successfully",
+	c.ShouldBind(gin.H{
+		"message": "Success",
 	})
 }
 
@@ -156,7 +157,38 @@ func ResetPassword(c *gin.Context) {
 	c.SetCookie("refresh_token", resp.RefreshToken, 1296000, "/", "", false, true)
 
 	// pass the response to the user
-	c.JSON(200, gin.H{
+	c.ShouldBind(gin.H{
+		"message": "Success",
+	})
+}
+
+func Refresh(c *gin.Context) {
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	// get the refresh token from the cookies
+	refresh_Token, err := c.Cookie("refresh_token")
+	if err != nil {
+		utils.Error(c, "Failed to get refresh token", http.StatusUnauthorized, err)
+		return
+	}
+
+	// send the request to the auth-service
+	resp, err := grpc_init.AuthClient.Refresh(ctx, &pb.RefreshRequest{RefreshToken: refresh_Token})
+	if err != nil {
+		utils.Error(c, "Internal Error in auth-service", http.StatusBadGateway, err)
+		return
+	}
+
+	// set cookies
+	c.SetSameSite(http.SameSiteLaxMode)
+
+	c.SetCookie("access_token", resp.AccessToken, 3600, "/", "", false, true)
+	c.SetCookie("refresh_token", resp.RefreshToken, 1296000, "/", "", false, true)
+
+	// pass the response to the user
+	c.ShouldBind(gin.H{
 		"message": "Success",
 	})
 }
