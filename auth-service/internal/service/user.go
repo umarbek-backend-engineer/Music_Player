@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/golang-jwt/jwt/v5"
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
@@ -55,10 +56,10 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRespo
 	user_agent := ""
 	ip_address := ""
 
-	if v := md.Get("user-agent"); len(v) > 0 {
+	if v := md.Get("md-user-agent"); len(v) > 0 {
 		user_agent = v[0]
 	}
-	if v := md.Get("ip-address"); len(v) > 0 {
+	if v := md.Get("md-ip-address"); len(v) > 0 {
 		ip_address = v[0]
 	}
 
@@ -66,10 +67,10 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRespo
 	if user_agent == "" && ip_address == "" {
 		return nil, utils.ErrMetaData
 	}
-
 	// get id, role, saved password where email matches from database
 	id, role, dbpassword, err := repository.LogInCrud(ctx, req.Email)
 	if err != nil {
+		
 		return nil, utils.MapErrors(err)
 	}
 
