@@ -40,7 +40,7 @@ func Route() *gin.Engine {
 	r.POST("/auth/refresh")
 	r.POST("/auth/validate")
 	r.POST("/auth/resetpassword")
-	r.POST("/auth/deleteaccount")
+	r.POST("/auth/deleteaccount/:id", handler.DeleteAccount)
 
 	return r
 }
