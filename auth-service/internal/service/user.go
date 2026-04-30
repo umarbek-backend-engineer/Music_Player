@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/golang-jwt/jwt/v5"
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
@@ -92,8 +91,8 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRespo
 		return nil, utils.MapErrors(err)
 	}
 
-	// hash the token befor saving it inside database for more security
-	hashed_refresh_token := utils.HashToken(token)
+	// hash the refresh_token befor saving it inside database for more security
+	hashed_refresh_token := utils.HashToken(refreshToken)
 
 	// save refresh token in data base
 	err = repository.InsertRefreshToken(ctx, id, hashed_refresh_token, user_agent, ip_address)
@@ -109,8 +108,6 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRespo
 }
 
 func (s *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
-
-	log.Println(req.RefreshToken)
 
 	// get the refresh token from request and hash it so it is same as in database
 	hashtoken := utils.HashToken(req.RefreshToken)

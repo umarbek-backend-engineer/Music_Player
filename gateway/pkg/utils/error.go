@@ -17,7 +17,7 @@ func Error(c *gin.Context, message string, code int, err ...error) {
 		errMsg = err[0].Error()
 	}
 
-	c.JSON(code, ErrorResponse{
+	c.AbortWithStatusJSON(code, ErrorResponse{
 		Success: false,
 		Message: message,
 		Error:   errMsg,

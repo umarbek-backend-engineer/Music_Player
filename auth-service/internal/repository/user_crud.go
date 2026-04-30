@@ -50,9 +50,8 @@ func LogoutCrud(ctx context.Context, hashtoken string) error {
 	}
 	defer conn.Close(ctx)
 
-	var exists bool
 	// check if it exists and valid, and return 1 which is true
-	err = conn.QueryRow(ctx, "delete from sessions where refresh_token = $1", hashtoken).Scan(&exists)
+	_, err = conn.Exec(ctx, "delete from sessions where token_hash = $1", hashtoken)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil

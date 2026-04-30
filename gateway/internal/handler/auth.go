@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -91,6 +92,12 @@ func LogOut(c *gin.Context) {
 		return
 	}
 
+	// validate refersh token
+	if refresh_Token == "" {
+		utils.Error(c, "Missing refresh token", http.StatusUnauthorized, errors.New("Missing Refresh Token"))
+		return
+	}
+
 	// send the request to the auth-service
 	resp, err := grpc_init.AuthClient.Logout(ctx, &pb.LogoutRequest{RefreshToken: refresh_Token})
 	if err != nil {
@@ -115,10 +122,23 @@ func DeleteAccount(c *gin.Context) {
 	defer cancel()
 
 	// get the user id from parametr
-	id := c.Param("id")
+	id, exists := c.Get("user_id")
+
+	// validate refersh token
+	if !exists {
+		utils.Error(c, "Missing user id", http.StatusUnauthorized, errors.New("Missing user_id"))
+		return
+	}
+
+	// conver id from type any to string 
+	userIDStr, ok := id.(string)
+	if !ok || userIDStr == "" {
+		utils.Error(c, "Invalid user id", http.StatusUnauthorized, errors.New("invalid user_id"))
+		return
+	}
 
 	// pass the request to the auth-service
-	_, err := grpc_init.AuthClient.DeleteAccount(ctx, &pb.DeleteAccountRequest{Id: id})
+	_, err := grpc_init.AuthClient.DeleteAccount(ctx, &pb.DeleteAccountRequest{Id: userIDStr})
 	if err != nil {
 		utils.Error(c, "Internal Error in auth-service", http.StatusBadGateway, err)
 		return
@@ -192,5 +212,3 @@ func Refresh(c *gin.Context) {
 		"message": "Success",
 	})
 }
-
-
