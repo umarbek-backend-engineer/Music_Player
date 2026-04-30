@@ -143,7 +143,7 @@ func RefreshTokenCrud(ctx context.Context, hashed_refresh_token string) (string,
 	// - if expires_at < now() → error
 
 	if revoked && time.Now().Unix() > expires_at.Unix() {
-		return "", "", err
+		return "", "", errors.New("The toke is expired")
 	}
 	return user_id, role, nil
 }

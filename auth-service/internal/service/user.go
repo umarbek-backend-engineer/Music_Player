@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/golang-jwt/jwt/v5"
 	pb "github.com/umarbek-backend-engineer/Music_Player/github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen"
@@ -138,8 +139,12 @@ func (s *Server) DeleteAccount(ctx context.Context, req *pb.DeleteAccountRequest
 // The method refreshed the token expiration date in sessions table
 func (s *Server) Refresh(ctx context.Context, req *pb.RefreshRequest) (*pb.AuthResponse, error) {
 
+	log.Println(req.RefreshToken)
+
 	// Get refresh and hash the token
 	hashed_refresh_token := utils.HashToken(req.GetRefreshToken())
+
+	log.Println(hashed_refresh_token)
 
 	// create db client
 	id, role, err := repository.RefreshTokenCrud(ctx, hashed_refresh_token)
@@ -284,6 +289,6 @@ func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest
 	// returning the response
 	return &pb.AuthResponse{
 		AccessToken:  token,
-		RefreshToken: hashed_refresh_token,
+		RefreshToken: ref_token,
 	}, nil
 }

@@ -37,7 +37,6 @@ func Route() *gin.Engine {
 	authGroup.Use((middleware.Authentication()))
 
 	// user - auth-service
-
 	r.POST("/auth/register", handler.Register)
 	r.POST("/auth/login", handler.LogIn)
 	authGroup.POST("/auth/logout", handler.LogOut)
@@ -45,9 +44,9 @@ func Route() *gin.Engine {
 	authGroup.POST("/auth/deleteaccount", handler.DeleteAccount)
 
 	// music
-	authGroup.POST("/music", handler.Upload)
-	authGroup.GET("/music", handler.ListMusic)
-	authGroup.GET("/music/:id", handler.StreamMusic)
+	authGroup.POST("/my_music", handler.Upload)
+	authGroup.GET("/my_music", handler.ListMusic)
+	authGroup.GET("/my_music/:id", handler.StreamMusic)
 
 	// lyrics
 	authGroup.POST("/lyrics", handler.AddLyrics)
