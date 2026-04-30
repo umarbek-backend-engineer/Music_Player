@@ -58,7 +58,7 @@ func UpdateRefreshToken(ctx context.Context, id, token string) error {
 	expires_at := time.Now().Add(duration)
 
 	// giving the query to database to save the refresh token in database
-	_, err = conn.Exec(ctx, "update tabel sessions set token_hash = $1, expires_at = $2 where user_id = $3", id, token, expires_at)
+	_, err = conn.Exec(ctx, "update sessions set token_hash = $1, expires_at = $2 where user_id = $3", token, expires_at, id)
 	if err != nil {
 		return err
 	}

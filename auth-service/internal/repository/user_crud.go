@@ -131,8 +131,8 @@ func RefreshTokenCrud(ctx context.Context, hashed_refresh_token string) (string,
 	err = conn.QueryRow(ctx, "select s.user_id, s.expires_at, s.revoked, u.role from sessions s join users u on s.user_id = u.id where s.token_hash = $1", hashed_refresh_token).Scan(
 		&user_id,
 		&expires_at,
-		&role,
 		&revoked,
+		&role,
 	)
 	if err != nil {
 		return "", "", err
