@@ -37,7 +37,7 @@ func Load() *Config {
 		DB_password:  os.Getenv("DB_PASSWORD"),
 		DB_name:      os.Getenv("DB_NAME"),
 		ACC_JWT_exp:  os.Getenv("JWT_EXP"),
-		REF_JWT_exp:  os.Getenv("JWT_EXP"),
+		REF_JWT_exp:  os.Getenv("REF_JWT_EXP"),
 		JWT_key:      os.Getenv("JWT_KEY"),
 	}
 }

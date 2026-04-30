@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
@@ -21,6 +22,12 @@ func Authentication() gin.HandlerFunc {
 		access_token, err := c.Cookie("access_token")
 		if err != nil {
 			utils.Error(c, "Missing access token", http.StatusUnauthorized, err)
+			return
+		}
+
+		// validate refersh token
+		if access_token == "" {
+			utils.Error(c, "Missing access token", http.StatusUnauthorized, errors.New("Missing Access Token"))
 			return
 		}
 

@@ -239,10 +239,10 @@ func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest
 	user_agent := ""
 	ip_address := ""
 
-	if v := md.Get("user_agent"); len(v) > 0 {
+	if v := md.Get("md-user-agent"); len(v) > 0 {
 		user_agent = v[0]
 	}
-	if v := md.Get("ip_address"); len(v) > 0 {
+	if v := md.Get("md-ip-address"); len(v) > 0 {
 		ip_address = v[0]
 	}
 

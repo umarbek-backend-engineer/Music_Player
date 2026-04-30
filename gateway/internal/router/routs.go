@@ -42,7 +42,7 @@ func Route() *gin.Engine {
 	r.POST("/auth/login", handler.LogIn)
 	authGroup.POST("/auth/logout", handler.LogOut)
 	authGroup.POST("/auth/resetpassword", handler.ResetPassword)
-	authGroup.POST("/auth/deleteaccount/:id", handler.DeleteAccount)
+	authGroup.POST("/auth/deleteaccount", handler.DeleteAccount)
 
 	// music
 	authGroup.POST("/music", handler.Upload)

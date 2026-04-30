@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -84,6 +85,9 @@ func ResetPasswordCrud(ctx context.Context, user_id string, currentPassword stri
 
 	// if db and current passwords match it will not return err
 	err = utils.VerifyPassword(currentPassword, dbPassword)
+	if err != nil {
+		return "", err
+	}
 
 	// hash the new password to save into database
 	hashedPassword, err := utils.PasswordHash(newpassword)
@@ -182,7 +186,7 @@ func LogInCrud(ctx context.Context, email string) (string, string, string, error
 	// query to get id, role and password based on email
 	err = conn.QueryRow(ctx, "select id, role, password from users where email = $1", email).Scan(&id, &role, &dbpassword)
 	if err != nil {
-		return "", "", "", err
+		return "", "", "", errors.New("There is not user with email: " + email)
 	}
 	return id, role, dbpassword, nil
 }

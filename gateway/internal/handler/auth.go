@@ -92,12 +92,6 @@ func LogOut(c *gin.Context) {
 		return
 	}
 
-	// validate refersh token
-	if refresh_Token == "" {
-		utils.Error(c, "Missing refresh token", http.StatusUnauthorized, errors.New("Missing Refresh Token"))
-		return
-	}
-
 	// send the request to the auth-service
 	resp, err := grpc_init.AuthClient.Logout(ctx, &pb.LogoutRequest{RefreshToken: refresh_Token})
 	if err != nil {
@@ -130,7 +124,7 @@ func DeleteAccount(c *gin.Context) {
 		return
 	}
 
-	// conver id from type any to string 
+	// conver id from type any to string
 	userIDStr, ok := id.(string)
 	if !ok || userIDStr == "" {
 		utils.Error(c, "Invalid user id", http.StatusUnauthorized, errors.New("invalid user_id"))
@@ -154,6 +148,16 @@ func ResetPassword(c *gin.Context) {
 	// get the request context with timeout of 10 seconds
 	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
 	defer cancel()
+
+	// get the nessessary date to pass to auth-service as Headers
+	// in metadata
+	md := metadata.New(map[string]string{
+		"md-user-agent": c.Request.UserAgent(),
+		"md-ip-address": c.ClientIP(),
+	})
+
+	// put the metadata inside ctx
+	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	// get the request body
 	var RestPassword pb.ResetPasswordRequest
