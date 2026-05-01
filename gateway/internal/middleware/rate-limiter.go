@@ -48,7 +48,7 @@ func (r *rateLimiter) Cleaup() {
 	}
 }
 
-func (rl *rateLimiter) Middleware() gin.HandlerFunc {
+func (rl *rateLimiter) GinMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// get the user ip  address
 		ip := ctx.ClientIP()
