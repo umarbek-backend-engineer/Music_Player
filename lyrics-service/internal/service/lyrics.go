@@ -83,13 +83,17 @@ func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*pb.E
 }
 
 func (s *Server) GetLyrics(ctx context.Context, req *pb.GetLyricsRequest) (*pb.LyricsResponse, error) {
+
+	// get the lyrics in models struct (json)
 	resp, err := repository.GetLyricsByMusicID(ctx, req.MusicId)
 	if err != nil {
 		return nil, utils.MapError(err)
 	}
 
+	// initialize lyricsStruct of protobuffer
 	lyrics := make([]*pb.LyricsStruct, 0, len(resp.Lyrics))
 
+	// model struct (json) to pb struct
 	for _, seg := range resp.Lyrics {
 		lyrics = append(lyrics, &pb.LyricsStruct{
 			Start: float32(seg.Start),
@@ -98,6 +102,7 @@ func (s *Server) GetLyrics(ctx context.Context, req *pb.GetLyricsRequest) (*pb.L
 		})
 	}
 
+	// response to the GATEWAY
 	return &pb.LyricsResponse{
 		Language: resp.Language,
 		Lyrics:   lyrics,
