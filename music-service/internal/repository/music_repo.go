@@ -10,7 +10,7 @@ import (
 	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/repository/db_connect"
 )
 
-func UploadMusicDBHandler(ctx context.Context, filename, filepath string) error {
+func UploadMusicDBHandler(ctx context.Context, user_id, title, filepath string) error {
 
 	conn, err := db_connect.Connect()
 	if err != nil {
@@ -18,7 +18,7 @@ func UploadMusicDBHandler(ctx context.Context, filename, filepath string) error 
 	}
 	defer conn.Close(ctx)
 
-	msgTag, err := conn.Exec(ctx, "insert into music (filename, filepath) values ($1, $2) on conflict (filepath) do nothing", filename, filepath)
+	msgTag, err := conn.Exec(ctx, "insert into music (user_id, title, filepath) values ($1, $2, $3) on conflict (filepath) do nothing", user_id, title, filepath)
 	if err != nil {
 		return err
 	}

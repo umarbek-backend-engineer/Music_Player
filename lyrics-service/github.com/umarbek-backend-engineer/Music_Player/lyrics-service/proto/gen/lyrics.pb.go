@@ -9,6 +9,7 @@ package pb
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -229,47 +230,11 @@ func (x *AddLyricsRequest) GetText() string {
 	return ""
 }
 
-type Empty struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Empty) Reset() {
-	*x = Empty{}
-	mi := &file_proto_lyrics_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Empty) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Empty) ProtoMessage() {}
-
-func (x *Empty) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_lyrics_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Empty.ProtoReflect.Descriptor instead.
-func (*Empty) Descriptor() ([]byte, []int) {
-	return file_proto_lyrics_proto_rawDescGZIP(), []int{4}
-}
-
 var File_proto_lyrics_proto protoreflect.FileDescriptor
 
 const file_proto_lyrics_proto_rawDesc = "" +
 	"\n" +
-	"\x12proto/lyrics.proto\x12\x06lyrics\"-\n" +
+	"\x12proto/lyrics.proto\x12\x06lyrics\x1a\x1bgoogle/protobuf/empty.proto\"-\n" +
 	"\x10GetLyricsRequest\x12\x19\n" +
 	"\bmusic_id\x18\x01 \x01(\tR\amusicId\"Z\n" +
 	"\x0eLyricsResponse\x12\x1a\n" +
@@ -281,11 +246,10 @@ const file_proto_lyrics_proto_rawDesc = "" +
 	"\x04text\x18\x03 \x01(\tR\x04text\"A\n" +
 	"\x10AddLyricsRequest\x12\x19\n" +
 	"\bmusic_id\x18\x01 \x01(\tR\amusicId\x12\x12\n" +
-	"\x04text\x18\x02 \x01(\tR\x04text\"\a\n" +
-	"\x05Empty2\x84\x01\n" +
+	"\x04text\x18\x02 \x01(\tR\x04text2\x8d\x01\n" +
 	"\rLyricsService\x12=\n" +
-	"\tGetLyrics\x12\x18.lyrics.GetLyricsRequest\x1a\x16.lyrics.LyricsResponse\x124\n" +
-	"\tAddLyrics\x12\x18.lyrics.AddLyricsRequest\x1a\r.lyrics.EmptyBNZLgithub.com/umarbek-backend-engineer/Music_Player/lyrics-service/proto/gen;pbb\x06proto3"
+	"\tGetLyrics\x12\x18.lyrics.GetLyricsRequest\x1a\x16.lyrics.LyricsResponse\x12=\n" +
+	"\tAddLyrics\x12\x18.lyrics.AddLyricsRequest\x1a\x16.google.protobuf.EmptyBNZLgithub.com/umarbek-backend-engineer/Music_Player/lyrics-service/proto/gen;pbb\x06proto3"
 
 var (
 	file_proto_lyrics_proto_rawDescOnce sync.Once
@@ -299,20 +263,20 @@ func file_proto_lyrics_proto_rawDescGZIP() []byte {
 	return file_proto_lyrics_proto_rawDescData
 }
 
-var file_proto_lyrics_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_proto_lyrics_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_proto_lyrics_proto_goTypes = []any{
 	(*GetLyricsRequest)(nil), // 0: lyrics.GetLyricsRequest
 	(*LyricsResponse)(nil),   // 1: lyrics.LyricsResponse
 	(*LyricsStruct)(nil),     // 2: lyrics.LyricsStruct
 	(*AddLyricsRequest)(nil), // 3: lyrics.AddLyricsRequest
-	(*Empty)(nil),            // 4: lyrics.Empty
+	(*emptypb.Empty)(nil),    // 4: google.protobuf.Empty
 }
 var file_proto_lyrics_proto_depIdxs = []int32{
 	2, // 0: lyrics.LyricsResponse.lyrics:type_name -> lyrics.LyricsStruct
 	0, // 1: lyrics.LyricsService.GetLyrics:input_type -> lyrics.GetLyricsRequest
 	3, // 2: lyrics.LyricsService.AddLyrics:input_type -> lyrics.AddLyricsRequest
 	1, // 3: lyrics.LyricsService.GetLyrics:output_type -> lyrics.LyricsResponse
-	4, // 4: lyrics.LyricsService.AddLyrics:output_type -> lyrics.Empty
+	4, // 4: lyrics.LyricsService.AddLyrics:output_type -> google.protobuf.Empty
 	3, // [3:5] is the sub-list for method output_type
 	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -331,7 +295,7 @@ func file_proto_lyrics_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_lyrics_proto_rawDesc), len(file_proto_lyrics_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
-	"log"
 
 	"os"
 	"path/filepath"
@@ -13,6 +13,7 @@ import (
 	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/config"
 	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/repository"
 	"github.com/umarbek-backend-engineer/Music_Player/music-service/pkg/utils"
+	"google.golang.org/grpc/metadata"
 )
 
 // func StartConsumer() error {
@@ -104,9 +105,20 @@ import (
 func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	cgf := config.Load()
 	var file *os.File
-	var filename string
+	var title string
 	var filePath string
 
+	// extract the id form the incoming context (metadata)
+	md, ok := metadata.FromIncomingContext(stream.Context())
+	if !ok {
+		return utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+	userID := md.Get("user_id")[0]
+	if len(userID) == 0 {
+		return utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+
+	// the loop will run till the file chunks passed completely
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {
@@ -115,26 +127,27 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 		if err != nil {
 			return utils.MapErrors(err)
 		}
-		if req.Filename != "" {
-			filename = req.Filename
+		if req.Title != "" {
+			title = req.Title
 		}
 		// Create file on first chunk
 		if file == nil {
-			if filename == "" {
+			if title == "" {
 				return utils.MapErrors(fmt.Errorf("Empty file name"))
 			}
 			err = os.MkdirAll(cgf.StoragePath, 0755)
 			if err != nil {
 				return utils.MapErrors(err)
 			}
-			filePath = filepath.Join(cgf.StoragePath, req.Filename)
-			log.Println(filePath)
+			filePath = filepath.Join(cgf.StoragePath, req.Title, ".", userID)
+
+			// create the file inside the storage
 			file, err = os.Create(filePath)
 			if err != nil {
 				return utils.MapErrors(err)
 			}
 		}
-		//write the chunk
+		//write the chunk iside the created file
 		if len(req.Data) > 0 {
 			_, err = file.Write(req.Data)
 			if err != nil {
@@ -152,16 +165,15 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	if err != nil {
 		return utils.MapErrors(err)
 	}
-	// save meta data in database
-	err = repository.UploadMusicDBHandler(stream.Context(), filename, filePath)
+	// save metadata in database
+	err = repository.UploadMusicDBHandler(stream.Context(), userID, title, filePath)
 	if err != nil {
 		return utils.MapErrors(err)
 	}
 	// send response
 	return stream.SendAndClose(&pb.UploadMusicResponse{
-		Status: filename + " - File uploaded successfully",
+		Status: title + " - File uploaded successfully",
 	})
-
 }
 
 func (s *Server) ListMusic(ctx context.Context, req *pb.Empty) (*pb.ListResponse, error) {
@@ -209,7 +221,7 @@ func (s *Server) StreamMusic(req *pb.StreamRequest, stream pb.MusicService_Strea
 
 		// send the  chunk of music
 		err = stream.Send(&pb.MusicChunk{
-			Name:    music.FileName,
+			Title:   music.FileName,
 			Content: buffer[:n],
 		})
 

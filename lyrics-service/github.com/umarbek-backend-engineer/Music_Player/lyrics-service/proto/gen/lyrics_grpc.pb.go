@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -28,7 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LyricsServiceClient interface {
 	GetLyrics(ctx context.Context, in *GetLyricsRequest, opts ...grpc.CallOption) (*LyricsResponse, error)
-	AddLyrics(ctx context.Context, in *AddLyricsRequest, opts ...grpc.CallOption) (*Empty, error)
+	AddLyrics(ctx context.Context, in *AddLyricsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type lyricsServiceClient struct {
@@ -49,9 +50,9 @@ func (c *lyricsServiceClient) GetLyrics(ctx context.Context, in *GetLyricsReques
 	return out, nil
 }
 
-func (c *lyricsServiceClient) AddLyrics(ctx context.Context, in *AddLyricsRequest, opts ...grpc.CallOption) (*Empty, error) {
+func (c *lyricsServiceClient) AddLyrics(ctx context.Context, in *AddLyricsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Empty)
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, LyricsService_AddLyrics_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -64,7 +65,7 @@ func (c *lyricsServiceClient) AddLyrics(ctx context.Context, in *AddLyricsReques
 // for forward compatibility.
 type LyricsServiceServer interface {
 	GetLyrics(context.Context, *GetLyricsRequest) (*LyricsResponse, error)
-	AddLyrics(context.Context, *AddLyricsRequest) (*Empty, error)
+	AddLyrics(context.Context, *AddLyricsRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedLyricsServiceServer()
 }
 
@@ -78,7 +79,7 @@ type UnimplementedLyricsServiceServer struct{}
 func (UnimplementedLyricsServiceServer) GetLyrics(context.Context, *GetLyricsRequest) (*LyricsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLyrics not implemented")
 }
-func (UnimplementedLyricsServiceServer) AddLyrics(context.Context, *AddLyricsRequest) (*Empty, error) {
+func (UnimplementedLyricsServiceServer) AddLyrics(context.Context, *AddLyricsRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method AddLyrics not implemented")
 }
 func (UnimplementedLyricsServiceServer) mustEmbedUnimplementedLyricsServiceServer() {}

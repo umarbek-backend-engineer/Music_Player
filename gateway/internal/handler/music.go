@@ -2,8 +2,10 @@ package handler
 
 import (
 	"bytes"
+	"errors"
 
 	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	grpc_init "github.com/umarbek-backend-engineer/Music_Player/gateway/internal/grpc_init"
@@ -98,12 +100,27 @@ func Upload(c *gin.Context) {
 
 	ctx := c.Request.Context()
 
+	// get the user id from context
+	id, exists := c.Get("Id")
+	if !exists && id == "" {
+		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing id in context"))
+		return
+	}
+	idStr := id.(string)
 	// get the music from requst
 	fileheader, err := c.FormFile("file")
 	if err != nil {
 		utils.Error(c, "Failed to recieve file", http.StatusBadRequest, err)
 		return
 	}
+
+	// pass id with metadata
+	MD := metadata.Pairs(
+		"user-id", idStr,
+	)
+
+	// rewrite the context 
+	ctx = metadata.NewOutgoingContext(ctx, MD)
 
 	// open the file
 	file, err := fileheader.Open()
