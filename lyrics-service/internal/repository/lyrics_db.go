@@ -12,7 +12,7 @@ import (
 
 // in this function I will check if the lyrics of the music exists If yes, it will return true, if no, it will return false
 
-func Is_music_lyric_exists(ctx context.Context, music_name string) (bool, error) {
+func Is_music_lyric_exists(ctx context.Context, music_id string) (bool, error) {
 	conn, err := posgres.Connect()
 	if err != nil {
 		return false, err
@@ -22,7 +22,7 @@ func Is_music_lyric_exists(ctx context.Context, music_name string) (bool, error)
 	var exists bool
 
 	// here i am checking if the same name exists in the data base if yes it will return true, else false
-	err = conn.QueryRow(ctx, "select exists (select 1 from lyrics where name = $1)", music_name).Scan(&exists)
+	err = conn.QueryRow(ctx, "select exists (select 1 from lyrics where music_id = $1)", music_id).Scan(&exists)
 	if err != nil && err != sql.ErrNoRows {
 		return false, err
 	}

@@ -12,17 +12,20 @@ import (
 
 func UploadMusicDBHandler(ctx context.Context, user_id, title, filepath string) error {
 
+	// connect to database
 	conn, err := db_connect.Connect()
 	if err != nil {
 		return err
 	}
 	defer conn.Close(ctx)
 
-	msgTag, err := conn.Exec(ctx, "insert into music (user_id, title, filepath) values ($1, $2, $3) on conflict (filepath) do nothing", user_id, title, filepath)
+	// store the meta information inside the db
+	msgTag, err := conn.Exec(ctx, "insert into music (user_id, title, filepath) values ($1, $2, $3)", user_id, title, filepath)
 	if err != nil {
 		return err
 	}
 
+	// check it anything was inserted
 	if msgTag.RowsAffected() == 0 {
 		return fmt.Errorf("no rows inserted (conflict or failure)")
 	}
@@ -39,7 +42,7 @@ func ListMusicDB(ctx context.Context, user_id string) ([]*pb.MusicItem, error) {
 	defer conn.Close(ctx)
 
 	// get the music where id matches
-	rows, err := conn.Query(ctx, "select id, filename from music where user_id = $1", user_id)
+	rows, err := conn.Query(ctx, "select id, title from music where user_id = $1", user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +70,7 @@ func GetMusicIndoFromDB_on_ID(ctx context.Context, user_id, music_id string) (mo
 	}
 	defer conn.Close(ctx)
 
-	err = conn.QueryRow(ctx, "select filename, filepath from music where id = $1 and user_id = $2", music_id, user_id).Scan(&music.FileName, &music.FilePath)
+	err = conn.QueryRow(ctx, "select title, filepath from music where id = $1 and user_id = $2", music_id, user_id).Scan(&music.FileName, &music.FilePath)
 	if err != nil {
 		return model.Music{}, err
 	}

@@ -13,6 +13,8 @@ func Route() *gin.Engine {
 
 	r := gin.Default()
 
+	r.SetTrustedProxies([]string{"127.0.0.1"})
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
@@ -32,18 +34,18 @@ func Route() *gin.Engine {
 	r.Use(rl.GinMiddleware())
 
 	// use authentication verifier for the rest of the routes
-	authGroup := r.Group("/")
+	authGroup := r.Group("/auth/")
 	authGroup.Use((middleware.Authentication()))
 
 	// public
-	r.POST("/auth/register", handler.Register)
-	r.POST("/auth/login", handler.LogIn)
+	r.POST("/register", handler.Register)
+	r.POST("/login", handler.LogIn)
 
 	// protected
-	authGroup.POST("/auth/logout", handler.LogOut)
-	authGroup.POST("/auth/resetpassword", handler.ResetPassword)
-	authGroup.POST("/auth/deleteaccount", handler.DeleteAccount)
-	authGroup.POST("/auth/refresh", handler.Refresh)
+	authGroup.POST("/logout", handler.LogOut)
+	authGroup.POST("/resetpassword", handler.ResetPassword)
+	authGroup.POST("/deleteaccount", handler.DeleteAccount)
+	authGroup.POST("/refresh", handler.Refresh)
 
 	// music
 	authGroup.POST("/my_music", handler.Upload)

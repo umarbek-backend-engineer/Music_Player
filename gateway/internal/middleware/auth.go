@@ -22,6 +22,7 @@ func Authentication() gin.HandlerFunc {
 		access_token, err := c.Cookie("access_token")
 		if err != nil {
 			utils.Error(c, "Missing access token", http.StatusUnauthorized, err)
+			c.Abort()
 			return
 		}
 

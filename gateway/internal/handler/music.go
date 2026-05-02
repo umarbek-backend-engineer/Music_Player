@@ -2,6 +2,7 @@ package handler
 
 import (
 	"bytes"
+	"context"
 	"errors"
 
 	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
@@ -98,15 +99,22 @@ import (
 
 func Upload(c *gin.Context) {
 
-	ctx := c.Request.Context()
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
 
 	// get the user id from context
-	id, exists := c.Get("Id")
-	if !exists && id == "" {
+	id, exists := c.Get("user_id")
+	if !exists {
 		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing id in context"))
 		return
 	}
-	idStr := id.(string)
+
+	idStr, ok := id.(string)
+	if !ok {
+		utils.Error(c, "Error in converting id type any to idStr string", http.StatusInternalServerError, errors.New("Internal Server Error"))
+		return
+	}
 	// get the music from requst
 	fileheader, err := c.FormFile("file")
 	if err != nil {
@@ -119,7 +127,7 @@ func Upload(c *gin.Context) {
 		"user-id", idStr,
 	)
 
-	// rewrite the context 
+	// rewrite the context
 	ctx = metadata.NewOutgoingContext(ctx, MD)
 
 	// open the file
@@ -186,8 +194,30 @@ func Upload(c *gin.Context) {
 }
 
 func ListMusic(c *gin.Context) {
-	// context of the browser
-	ctx := c.Request.Context()
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	// get the user id from context
+	id, exists := c.Get("user_id")
+	if !exists {
+		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing id in context"))
+		return
+	}
+
+	idStr, ok := id.(string)
+	if !ok {
+		utils.Error(c, "Error in converting id type any to idStr string", http.StatusInternalServerError, errors.New("Internal Server Error"))
+		return
+	}
+
+	// pass id with metadata
+	MD := metadata.Pairs(
+		"user-id", idStr,
+	)
+
+	// rewrite the context
+	ctx = metadata.NewOutgoingContext(ctx, MD)
 
 	res, err := grpc_init.MusicClient.ListMusic(ctx, &emptypb.Empty{})
 	if err != nil {
@@ -200,12 +230,39 @@ func ListMusic(c *gin.Context) {
 }
 
 func StreamMusic(c *gin.Context) {
-	ctx := c.Request.Context()
+
 	var filename string
 
-	id := c.Param("id")
+	// extract music_id from parametr
+	music_id := c.Param("id")
 
-	stream, err := grpc_init.MusicClient.StreamMusic(ctx, &pb.StreamRequest{Id: id})
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	// get the user id from context
+	id, exists := c.Get("user_id")
+	if !exists {
+		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing id in context"))
+		return
+	}
+
+	// type convertion
+	idStr, ok := id.(string)
+	if !ok {
+		utils.Error(c, "Error in converting id type any to idStr string", http.StatusInternalServerError, errors.New("Internal Server Error"))
+		return
+	}
+
+	// pass id with metadata
+	MD := metadata.Pairs(
+		"user-id", idStr,
+	)
+
+	// rewrite the context
+	ctx = metadata.NewOutgoingContext(ctx, MD)
+
+	stream, err := grpc_init.MusicClient.StreamMusic(ctx, &pb.StreamRequest{Id: music_id})
 	if err != nil {
 		utils.Error(c, "Failed to get stream of music", http.StatusInternalServerError, err)
 		return

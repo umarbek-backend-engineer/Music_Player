@@ -17,92 +17,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-// func StartConsumer() error {
-// 	cgf := config.Load()
-
-// 	var filename string
-// 	// cgf := config.Load()
-
-// 	rabbit, err := rabbitmq.Connect()
-// 	if err != nil {
-// 		return utils.MapErrors(err)
-// 	}
-// 	// defer rabbit.Conn.Close()
-// 	// defer rabbit.Ch.Close()
-
-// 	msg, err := rabbit.Ch.Consume(
-// 		rabbit.Q.Name,
-// 		"",
-// 		true,
-// 		false,
-// 		false,
-// 		false,
-// 		nil,
-// 	)
-// 	if err != nil {
-// 		return utils.MapErrors(err)
-// 	}
-
-// 	forever := make(chan struct{})
-
-// 	go func() {
-
-// 		var files = make(map[string]*os.File)
-
-// 		for d := range msg {
-
-// 			// declare proto chunk
-// 			var chunk pb.UploadMusicChunk
-
-// 			err = proto.Unmarshal(d.Body, &chunk)
-// 			if err != nil {
-// 				utils.MapErrors(err)
-// 				continue
-// 			}
-
-// 			filename = chunk.Filename
-
-// 			filePath := fmt.Sprintf("./%s/%s", cgf.StoragePath, chunk.Filename)
-
-// 			file := files[chunk.Filename]
-// 			// 🟢 create file if not exists
-// 			if file == nil {
-// 				file, err = os.Create(filePath)
-// 				if err != nil {
-// 					utils.MapErrors(err)
-// 					continue
-// 				}
-// 				files[chunk.Filename] = file
-// 			}
-
-// 			// 🟢 write chunk data
-// 			_, err := file.Write(chunk.Data)
-// 			if err != nil {
-// 				utils.MapErrors(err)
-// 				continue
-// 			}
-
-// 			// 🔴 if last chunk → close file
-// 			if chunk.IsLast {
-// 				log.Println("Finished file:", chunk.Filename)
-
-// 				// saving the music metadata in database
-// 				err = repository.UploadMusicDBHandler(context.Background(), filename, filePath)
-// 				if err != nil {
-// 					utils.MapErrors(err)
-// 					continue
-// 				}
-// 				file.Close()
-// 				delete(files, filename)
-// 			}
-
-// 		}
-// 	}()
-// 	<-forever
-// 	return nil
-
-// }
-
+// the function will create and upload the recieved audio file and store the metadata inside the database
 func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	cgf := config.Load()
 	var file *os.File
@@ -114,10 +29,14 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	if !ok {
 		return utils.MapErrors(errors.New("Missing id in metadata"))
 	}
-	userID := md.Get("user_id")[0]
+
+	userID := md.Get("user-id")
+	// validate userID
 	if len(userID) == 0 {
 		return utils.MapErrors(errors.New("Missing id in metadata"))
 	}
+
+	user_id := userID[0]
 
 	// the loop will run till the file chunks passed completely
 	for {
@@ -140,7 +59,7 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 			if err != nil {
 				return utils.MapErrors(err)
 			}
-			filePath = filepath.Join(cgf.StoragePath, req.Title, ".", userID)
+			filePath = filepath.Join(cgf.StoragePath, user_id+"."+req.Title)
 
 			// create the file inside the storage
 			file, err = os.Create(filePath)
@@ -167,7 +86,7 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 		return utils.MapErrors(err)
 	}
 	// save metadata in database
-	err = repository.UploadMusicDBHandler(stream.Context(), userID, title, filePath)
+	err = repository.UploadMusicDBHandler(stream.Context(), user_id, title, filePath)
 	if err != nil {
 		return utils.MapErrors(err)
 	}
@@ -177,6 +96,7 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	})
 }
 
+// this method will list every audio that is stored in db with user_id saved in db
 func (s *Server) ListMusic(ctx context.Context, req *emptypb.Empty) (*pb.ListResponse, error) {
 
 	// extract the id form the incoming context (metadata)
@@ -184,13 +104,16 @@ func (s *Server) ListMusic(ctx context.Context, req *emptypb.Empty) (*pb.ListRes
 	if !ok {
 		return nil, utils.MapErrors(errors.New("Missing id in metadata"))
 	}
-	userID := md.Get("user_id")[0]
+	userID := md.Get("user-id")
+	// validate userID
 	if len(userID) == 0 {
 		return nil, utils.MapErrors(errors.New("Missing id in metadata"))
 	}
 
+	user_id := userID[0]
+
 	// get the music from db
-	musics, err := repository.ListMusicDB(ctx, userID)
+	musics, err := repository.ListMusicDB(ctx, user_id)
 	if err != nil {
 		return nil, utils.MapErrors(err)
 	}
@@ -211,13 +134,16 @@ func (s *Server) StreamMusic(req *pb.StreamRequest, stream pb.MusicService_Strea
 	if !ok {
 		return utils.MapErrors(errors.New("Missing id in metadata"))
 	}
-	userID := md.Get("user_id")[0]
+	userID := md.Get("user-id")
+	// validate userID
 	if len(userID) == 0 {
 		return utils.MapErrors(errors.New("Missing id in metadata"))
 	}
 
+	user_id := userID[0]
+
 	// Build file path (you may map ID → filename later)
-	music, err := repository.GetMusicIndoFromDB_on_ID(ctx, userID, req.Id)
+	music, err := repository.GetMusicIndoFromDB_on_ID(ctx, user_id, req.Id)
 	if err != nil {
 		return utils.MapErrors(err)
 	}

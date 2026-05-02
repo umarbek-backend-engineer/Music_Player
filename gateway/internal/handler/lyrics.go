@@ -1,9 +1,13 @@
 package handler
 
 import (
+	"context"
+	"errors"
 	"net/http"
+	"time"
 
 	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/gin-gonic/gin"
 	pb "github.com/umarbek-backend-engineer/Music_Player/gateway/github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen"
@@ -12,8 +16,32 @@ import (
 )
 
 func AddLyrics(c *gin.Context) {
-	ctx := c.Request.Context()
 	var req modules.AddLyricsPayload
+
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Minute*5)
+	defer cancel()
+
+	// get the user id from context
+	id, exists := c.Get("user_id")
+	if !exists {
+		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing id in context"))
+		return
+	}
+
+	idStr, ok := id.(string)
+	if !ok {
+		utils.Error(c, "Error in converting id type any to idStr string", http.StatusInternalServerError, errors.New("Internal Server Error"))
+		return
+	}
+
+	// pass id with metadata
+	MD := metadata.Pairs(
+		"user-id", idStr,
+	)
+
+	// rewrite the context
+	ctx = metadata.NewOutgoingContext(ctx, MD)
 
 	// bind the json, get the json format request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -41,8 +69,9 @@ func AddLyrics(c *gin.Context) {
 
 func GetLyrics(c *gin.Context) {
 
-	// get the ctx to send to the grpc service
-	ctx := c.Request.Context()
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
 
 	// getting the parametr of the id
 	idStr := c.Param("id")

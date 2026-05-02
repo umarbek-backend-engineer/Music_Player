@@ -3,6 +3,7 @@ package service
 import (
 	"bytes"
 	"context"
+	"errors"
 	"io"
 	"log"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/repository"
 	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/pkg/utils"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -21,13 +23,21 @@ import (
 
 func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*emptypb.Empty, error) {
 
-	exists, err := repository.Is_music_lyric_exists(ctx, req.Text)
+	// check if the music exists
+	exists, err := repository.Is_music_lyric_exists(ctx, req.MusicId)
 	if err != nil {
 		return nil, err
 	}
 	if exists {
 		return &emptypb.Empty{}, nil
 	}
+
+	// convert incoming metadata into outgoing
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, utils.MapError(errors.New("Missing metadata in the incoming context"))
+	}
+	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	// connecting  to grpc server to get the music it self
 	conn, err := grpc.Dial("music-service:50051", grpc.WithInsecure())
