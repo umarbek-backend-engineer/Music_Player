@@ -10,6 +10,7 @@ import (
 	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/internal/repository"
 	"github.com/umarbek-backend-engineer/Music_Player/lyrics-service/pkg/utils"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is add lyrics rpc
@@ -18,14 +19,14 @@ import (
 // the rpc will return music bytes and the bytes are send to wisper
 // recieved lyrics with timestamp are saved in db
 
-func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*pb.Empty, error) {
+func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*emptypb.Empty, error) {
 
 	exists, err := repository.Is_music_lyric_exists(ctx, req.Text)
 	if err != nil {
 		return nil, err
 	}
 	if exists {
-		return &pb.Empty{}, nil
+		return &emptypb.Empty{}, nil
 	}
 
 	// connecting  to grpc server to get the music it self
@@ -79,7 +80,7 @@ func (s *Server) AddLyrics(ctx context.Context, req *pb.AddLyricsRequest) (*pb.E
 		return nil, utils.MapError(err)
 	}
 
-	return &pb.Empty{}, nil
+	return &emptypb.Empty{}, nil
 }
 
 func (s *Server) GetLyrics(ctx context.Context, req *pb.GetLyricsRequest) (*pb.LyricsResponse, error) {

@@ -30,7 +30,7 @@ func Is_music_lyric_exists(ctx context.Context, music_name string) (bool, error)
 	return exists, nil
 }
 
-func SaveLyrics(ctx context.Context, musicID, musicName string, content model.Respond) error {
+func SaveLyrics(ctx context.Context, musicID, title string, content model.Respond) error {
 	conn, err := posgres.Connect()
 	if err != nil {
 		return err
@@ -38,9 +38,9 @@ func SaveLyrics(ctx context.Context, musicID, musicName string, content model.Re
 	defer conn.Close(ctx)
 
 	_, err = conn.Exec(ctx,
-		"insert into lyrics (music_id, name, content) values ($1, $2, $3)",
+		"insert into lyrics (music_id, title, content) values ($1, $2, $3)",
 		musicID,
-		musicName,
+		title,
 		content,
 	)
 

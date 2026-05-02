@@ -30,7 +30,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MusicServiceClient interface {
-	ListMusic(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListResponse, error)
+	ListMusic(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListResponse, error)
 	UploadMusic(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadMusicChunks, UploadMusicResponse], error)
 	StreamMusic(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[MusicChunk], error)
 	MakeMusicPublic(ctx context.Context, in *MakePublicRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -44,7 +44,7 @@ func NewMusicServiceClient(cc grpc.ClientConnInterface) MusicServiceClient {
 	return &musicServiceClient{cc}
 }
 
-func (c *musicServiceClient) ListMusic(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListResponse, error) {
+func (c *musicServiceClient) ListMusic(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListResponse)
 	err := c.cc.Invoke(ctx, MusicService_ListMusic_FullMethodName, in, out, cOpts...)
@@ -100,7 +100,7 @@ func (c *musicServiceClient) MakeMusicPublic(ctx context.Context, in *MakePublic
 // All implementations must embed UnimplementedMusicServiceServer
 // for forward compatibility.
 type MusicServiceServer interface {
-	ListMusic(context.Context, *emptypb.Empty) (*ListResponse, error)
+	ListMusic(context.Context, *Empty) (*ListResponse, error)
 	UploadMusic(grpc.ClientStreamingServer[UploadMusicChunks, UploadMusicResponse]) error
 	StreamMusic(*StreamRequest, grpc.ServerStreamingServer[MusicChunk]) error
 	MakeMusicPublic(context.Context, *MakePublicRequest) (*emptypb.Empty, error)
@@ -114,7 +114,7 @@ type MusicServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedMusicServiceServer struct{}
 
-func (UnimplementedMusicServiceServer) ListMusic(context.Context, *emptypb.Empty) (*ListResponse, error) {
+func (UnimplementedMusicServiceServer) ListMusic(context.Context, *Empty) (*ListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMusic not implemented")
 }
 func (UnimplementedMusicServiceServer) UploadMusic(grpc.ClientStreamingServer[UploadMusicChunks, UploadMusicResponse]) error {
@@ -148,7 +148,7 @@ func RegisterMusicServiceServer(s grpc.ServiceRegistrar, srv MusicServiceServer)
 }
 
 func _MusicService_ListMusic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -160,7 +160,7 @@ func _MusicService_ListMusic_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: MusicService_ListMusic_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MusicServiceServer).ListMusic(ctx, req.(*emptypb.Empty))
+		return srv.(MusicServiceServer).ListMusic(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

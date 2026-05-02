@@ -13,6 +13,6 @@ message StreamRequest {
 }
 
 message MusicChunk {
-    string name = 1;
+    string title = 1;
     bytes content = 2;
 }

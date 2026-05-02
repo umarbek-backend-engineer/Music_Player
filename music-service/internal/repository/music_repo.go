@@ -30,14 +30,16 @@ func UploadMusicDBHandler(ctx context.Context, user_id, title, filepath string) 
 	return nil
 }
 
-func ListMusicDB(ctx context.Context) ([]*pb.MusicItem, error) {
+func ListMusicDB(ctx context.Context, user_id string) ([]*pb.MusicItem, error) {
+	// connect to database
 	conn, err := db_connect.Connect()
 	if err != nil {
 		return nil, err
 	}
 	defer conn.Close(ctx)
 
-	rows, err := conn.Query(ctx, "select id, filename from music")
+	// get the music where id matches
+	rows, err := conn.Query(ctx, "select id, filename from music where user_id = $1", user_id)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +59,7 @@ func ListMusicDB(ctx context.Context) ([]*pb.MusicItem, error) {
 	return musics, nil
 }
 
-func GetMusicIndoFromDB_on_ID(ctx context.Context, id string) (model.Music, error) {
+func GetMusicIndoFromDB_on_ID(ctx context.Context, user_id, music_id string) (model.Music, error) {
 	var music model.Music
 	conn, err := db_connect.Connect()
 	if err != nil {
@@ -65,7 +67,7 @@ func GetMusicIndoFromDB_on_ID(ctx context.Context, id string) (model.Music, erro
 	}
 	defer conn.Close(ctx)
 
-	err = conn.QueryRow(ctx, "select filename, filepath from music where id = $1", id).Scan(&music.FileName, &music.FilePath)
+	err = conn.QueryRow(ctx, "select filename, filepath from music where id = $1 and user_id = $2", music_id, user_id).Scan(&music.FileName, &music.FilePath)
 	if err != nil {
 		return model.Music{}, err
 	}

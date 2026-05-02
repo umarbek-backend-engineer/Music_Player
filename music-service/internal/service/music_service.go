@@ -14,6 +14,7 @@ import (
 	"github.com/umarbek-backend-engineer/Music_Player/music-service/internal/repository"
 	"github.com/umarbek-backend-engineer/Music_Player/music-service/pkg/utils"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // func StartConsumer() error {
@@ -176,13 +177,25 @@ func (s *Server) UploadMusic(stream pb.MusicService_UploadMusicServer) error {
 	})
 }
 
-func (s *Server) ListMusic(ctx context.Context, req *pb.Empty) (*pb.ListResponse, error) {
+func (s *Server) ListMusic(ctx context.Context, req *emptypb.Empty) (*pb.ListResponse, error) {
+
+	// extract the id form the incoming context (metadata)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+	userID := md.Get("user_id")[0]
+	if len(userID) == 0 {
+		return nil, utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+
 	// get the music from db
-	musics, err := repository.ListMusicDB(ctx)
+	musics, err := repository.ListMusicDB(ctx, userID)
 	if err != nil {
 		return nil, utils.MapErrors(err)
 	}
 
+	// send back the response
 	return &pb.ListResponse{
 		Songs: musics,
 	}, nil
@@ -193,8 +206,18 @@ func (s *Server) StreamMusic(req *pb.StreamRequest, stream pb.MusicService_Strea
 
 	ctx := stream.Context()
 
+	// extract the id form the incoming context (metadata)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+	userID := md.Get("user_id")[0]
+	if len(userID) == 0 {
+		return utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+
 	// Build file path (you may map ID → filename later)
-	music, err := repository.GetMusicIndoFromDB_on_ID(ctx, req.Id)
+	music, err := repository.GetMusicIndoFromDB_on_ID(ctx, userID, req.Id)
 	if err != nil {
 		return utils.MapErrors(err)
 	}
