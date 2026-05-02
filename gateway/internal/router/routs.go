@@ -38,19 +38,19 @@ func Route() *gin.Engine {
 	authGroup.Use((middleware.Authentication()))
 
 	// public
-	r.POST("/register", handler.Register)
-	r.POST("/login", handler.LogIn)
+	r.POST("/register", handler.Register) // working
+	r.POST("/login", handler.LogIn)       // working
 
 	// protected
-	authGroup.POST("/logout", handler.LogOut)
-	authGroup.POST("/resetpassword", handler.ResetPassword)
-	authGroup.POST("/deleteaccount", handler.DeleteAccount)
-	authGroup.POST("/refresh", handler.Refresh)
+	authGroup.POST("/logout", handler.LogOut)                 // working
+	authGroup.POST("/resetpassword", handler.ResetPassword)   // working
+	authGroup.DELETE("/deleteaccount", handler.DeleteAccount) // working
+	authGroup.POST("/refresh", handler.Refresh)               // working
 
 	// music
-	authGroup.POST("/my_music", handler.Upload)
-	authGroup.GET("/my_music", handler.ListMusic)
-	authGroup.GET("/my_music/:id", handler.StreamMusic)
+	authGroup.POST("/my_music", handler.Upload)         // working
+	authGroup.GET("/my_music", handler.ListMusic)       // working
+	authGroup.GET("/my_music/:id", handler.StreamMusic) // working
 
 	// lyrics
 	authGroup.POST("/lyrics", handler.AddLyrics)

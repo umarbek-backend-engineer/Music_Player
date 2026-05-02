@@ -19,7 +19,7 @@ func AddLyrics(c *gin.Context) {
 	var req modules.AddLyricsPayload
 
 	// get the request context with timeout of 10 seconds
-	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Minute*5)
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Minute*10)
 	defer cancel()
 
 	// get the user id from context
