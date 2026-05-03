@@ -15,6 +15,18 @@ service AuthService {
     rpc ResetPassword(ResetPasswordRequest) returns (AuthResponse);
 
     rpc Refresh(RefreshRequest) returns (AuthResponse);
+
+    rpc GetAllUsers(google.protobuf.Empty) returns (AllUsers);
+}
+
+message AllUsers {
+    repeated GetUser users = 1;
+}
+
+message GetUser {
+    string id = 1;
+    string name = 2;
+    string lastname =3;
 }
 
 message  RegisterResponse {
