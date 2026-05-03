@@ -16,7 +16,14 @@ service MusicService {
 }
 
 message PublicMusicResponse {
-    
+    repeated PublicMusic music = 1;
+}
+
+message PublicMusic {
+    string music_id = 1;
+    string user_id = 2;
+    string title = 3;
+    bool is_public = 4;
 }
 
 message MakePrivateRequest{
@@ -34,7 +41,7 @@ message UploadMusicChunks {
 
 message MusicItem {
     string id = 1;
-    string filename = 2;
+    string title = 2;
 }
 
 message ListResponse {

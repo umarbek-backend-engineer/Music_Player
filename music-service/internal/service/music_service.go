@@ -129,7 +129,6 @@ func (s *Server) StreamMusic(req *pb.StreamRequest, stream pb.MusicService_Strea
 
 	ctx := stream.Context()
 
-
 	// Build file path (you may map ID → filename later)
 	music, err := repository.GetMusicIndoFromDB_on_ID(ctx, req.Id)
 	if err != nil {
@@ -167,4 +166,28 @@ func (s *Server) StreamMusic(req *pb.StreamRequest, stream pb.MusicService_Strea
 		}
 	}
 	return nil
+}
+
+func (s *Server) GetPublicMusic(ctx context.Context, req *emptypb.Empty) (*pb.PublicMusicResponse, error) {
+	// extract the id form the incoming context (metadata)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+	userID := md.Get("user-id")
+	// validate userID
+	if len(userID) == 0 {
+		return nil, utils.MapErrors(errors.New("Missing id in metadata"))
+	}
+
+	user_id := userID[0]
+
+	// connect to database via db client
+	music, err := repository.GetPublicCrudHandler(ctx, user_id)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// return response
+	return music, nil
 }

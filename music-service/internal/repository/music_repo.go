@@ -52,7 +52,7 @@ func ListMusicDB(ctx context.Context, user_id string) ([]*pb.MusicItem, error) {
 	// going through each row and saing each row inside music var and append to musics slice of pb.MusicItem
 	for rows.Next() {
 		var music pb.MusicItem
-		err = rows.Scan(&music.Id, &music.Filename)
+		err = rows.Scan(&music.Id, &music.Title)
 		if err != nil && err != sql.ErrNoRows {
 			return nil, err
 		}
@@ -73,6 +73,35 @@ func GetMusicIndoFromDB_on_ID(ctx context.Context, music_id string) (model.Music
 	err = conn.QueryRow(ctx, "select title, filepath from music where id = $1", music_id).Scan(&music.FileName, &music.FilePath)
 	if err != nil {
 		return model.Music{}, err
+	}
+	return music, nil
+}
+
+func GetPublicCrudHandler(ctx context.Context, user_id string) (*pb.PublicMusicResponse, error) {
+	conn, err := db_connect.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close(ctx)
+
+	// give the command to the database
+	rows, err := conn.Query(ctx, "select id, user_id, title, is_public from music where user_id = $1 and is_public != false", user_id)
+
+	// slice of music
+	music := &pb.PublicMusicResponse{}
+	// loop untill the completion command
+	for rows.Next() {
+		var single_music pb.PublicMusic
+		// assign the information recieved from music to variable single_music
+		err = rows.Scan(
+			&single_music.MusicId,
+			&single_music.UserId,
+			&single_music.Title,
+			&single_music.IsPublic,
+		)
+
+		// add single_music to sliece
+		music.Music = append(music.Music, &single_music)
 	}
 	return music, nil
 }
