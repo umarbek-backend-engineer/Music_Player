@@ -57,8 +57,8 @@ func Route() *gin.Engine {
 	authGroup.GET("/lyrics/:music_id", handler.GetLyrics) // working
 
 	// social
-	authGroup.GET("/users", handler.GetUsers) // get the existing user ID
-	authGroup.GET("/user/:user_id/musics")    // get all public music of that user
+	authGroup.GET("/users", handler.GetUsers)                      // get the existing user ID
+	authGroup.GET("/user/:user_id/musics", handler.GetPublicMusic) // get all public music of that user
 
 	return r
 }

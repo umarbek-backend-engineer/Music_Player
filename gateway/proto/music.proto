@@ -11,10 +11,22 @@ service MusicService {
     rpc UploadMusic(stream UploadMusicChunks) returns (UploadMusicResponse);
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
 
-    rpc MakeMusicPublic(MakePublicRequest) returns (google.protobuf.Empty);
+    rpc MakeMusicPrivate(MakePrivateRequest) returns (google.protobuf.Empty);
+    rpc GetPublicMusic(google.protobuf.Empty) returns (PublicMusicResponse);
 }
 
-message MakePublicRequest{
+message PublicMusicResponse {
+    repeated PublicMusic music = 1;
+}
+
+message PublicMusic {
+    string music_id = 1;
+    string user_id = 2;
+    string title = 3;
+    bool is_public = 4;
+}
+
+message MakePrivateRequest{
     string music_id = 1;
 }
 
@@ -29,7 +41,7 @@ message UploadMusicChunks {
 
 message MusicItem {
     string id = 1;
-    string filename = 2;
+    string title = 2;
 }
 
 message ListResponse {

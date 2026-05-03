@@ -284,3 +284,28 @@ func StreamMusic(c *gin.Context) {
 	http.ServeContent(c.Writer, c.Request, filename, time.Time{}, bytes.NewReader(buffer.Bytes()))
 
 }
+
+func GetPublicMusic(c *gin.Context) {
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	id := c.Param("music_id")
+
+	// pass id with metadata
+	MD := metadata.Pairs(
+		"user-id", id,
+	)
+
+	// rewrite the context
+	ctx = metadata.NewOutgoingContext(ctx, MD)
+
+	// send the request
+	music, err := grpc_init.MusicClient.GetPublicMusic(ctx, &emptypb.Empty{})
+	if err != nil {
+		utils.Error(c, "Internal Error: Failed request in Music service", http.StatusBadGateway, err)
+		return
+	}
+
+	c.JSON(200, music)
+}
