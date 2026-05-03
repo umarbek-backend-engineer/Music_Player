@@ -16,14 +16,14 @@ service AuthService {
 
     rpc Refresh(RefreshRequest) returns (AuthResponse);
 
-    rpc GetAllUsers(google.protobuf.Empty) returns (AllUsers);
+    rpc GetAllUsers(google.protobuf.Empty) returns (Users);
 }
 
-message AllUsers {
-    repeated GetUser users = 1;
+message Users {
+    repeated User users = 1;
 }
 
-message GetUser {
+message User {
     string id = 1;
     string name = 2;
     string lastname =3;

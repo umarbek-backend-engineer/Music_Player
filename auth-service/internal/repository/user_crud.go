@@ -190,3 +190,40 @@ func LogInCrud(ctx context.Context, email string) (string, string, string, error
 	}
 	return id, role, dbpassword, nil
 }
+
+// get users from db exept incoming user with user_id
+func GetUsersCrudHandler(ctx context.Context, user_id string) (*pb.Users, error) {
+	conn, err := postgres.Connect()
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close(ctx)
+
+	// give the commend to the database
+	rows, err := conn.Query(ctx, "select id, name, lastname from users where id != $1", user_id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users pb.Users
+
+	// this loop will run until rows.Next() is false
+	for rows.Next() {
+		// create pb.User so it will save the scaned row
+		var user pb.User
+		err = rows.Scan(
+			&user.Id,
+			&user.Name,
+			&user.Lastname,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		// append the user to sliece of users
+		users.Users = append(users.Users, &user)
+	}
+	return &users, nil
+}

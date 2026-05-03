@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 
@@ -291,4 +292,30 @@ func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest
 		AccessToken:  token,
 		RefreshToken: ref_token,
 	}, nil
+}
+
+func GetAllUsers(ctx context.Context, req *emptypb.Empty) (*pb.Users, error) {
+
+	// get requester user-id
+	md, exists := metadata.FromIncomingContext(ctx)
+	if !exists {
+		return nil, utils.MapErrors(errors.New("Missing user-id in metadata in context"))
+	}
+	// get the user-id
+	userIDSlice := md.Get("user-id")
+	// validate
+	if len(userIDSlice) == 0 {
+		return nil, utils.MapErrors(errors.New("Missing user-id in metadata in context"))
+	}
+
+	user_id := userIDSlice[0]
+
+	// create a conenction to database(client for database)
+	users, err := repository.GetUsersCrudHandler(ctx, user_id)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// return the response
+	return users, nil
 }

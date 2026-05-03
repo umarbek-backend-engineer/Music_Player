@@ -41,7 +41,7 @@ type AuthServiceClient interface {
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*AuthResponse, error)
 	Refresh(ctx context.Context, in *RefreshRequest, opts ...grpc.CallOption) (*AuthResponse, error)
-	GetAllUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AllUsers, error)
+	GetAllUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Users, error)
 }
 
 type authServiceClient struct {
@@ -122,9 +122,9 @@ func (c *authServiceClient) Refresh(ctx context.Context, in *RefreshRequest, opt
 	return out, nil
 }
 
-func (c *authServiceClient) GetAllUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AllUsers, error) {
+func (c *authServiceClient) GetAllUsers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Users, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AllUsers)
+	out := new(Users)
 	err := c.cc.Invoke(ctx, AuthService_GetAllUsers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -143,7 +143,7 @@ type AuthServiceServer interface {
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*emptypb.Empty, error)
 	ResetPassword(context.Context, *ResetPasswordRequest) (*AuthResponse, error)
 	Refresh(context.Context, *RefreshRequest) (*AuthResponse, error)
-	GetAllUsers(context.Context, *emptypb.Empty) (*AllUsers, error)
+	GetAllUsers(context.Context, *emptypb.Empty) (*Users, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -175,7 +175,7 @@ func (UnimplementedAuthServiceServer) ResetPassword(context.Context, *ResetPassw
 func (UnimplementedAuthServiceServer) Refresh(context.Context, *RefreshRequest) (*AuthResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Refresh not implemented")
 }
-func (UnimplementedAuthServiceServer) GetAllUsers(context.Context, *emptypb.Empty) (*AllUsers, error) {
+func (UnimplementedAuthServiceServer) GetAllUsers(context.Context, *emptypb.Empty) (*Users, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetAllUsers not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}

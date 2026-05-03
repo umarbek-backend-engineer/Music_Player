@@ -62,7 +62,7 @@ func ListMusicDB(ctx context.Context, user_id string) ([]*pb.MusicItem, error) {
 	return musics, nil
 }
 
-func GetMusicIndoFromDB_on_ID(ctx context.Context, user_id, music_id string) (model.Music, error) {
+func GetMusicIndoFromDB_on_ID(ctx context.Context, music_id string) (model.Music, error) {
 	var music model.Music
 	conn, err := db_connect.Connect()
 	if err != nil {
@@ -70,7 +70,7 @@ func GetMusicIndoFromDB_on_ID(ctx context.Context, user_id, music_id string) (mo
 	}
 	defer conn.Close(ctx)
 
-	err = conn.QueryRow(ctx, "select title, filepath from music where id = $1 and user_id = $2", music_id, user_id).Scan(&music.FileName, &music.FilePath)
+	err = conn.QueryRow(ctx, "select title, filepath from music where id = $1", music_id).Scan(&music.FileName, &music.FilePath)
 	if err != nil {
 		return model.Music{}, err
 	}

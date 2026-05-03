@@ -22,27 +22,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AllUsers struct {
+type Users struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Users         []*GetUser             `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Users         []*User                `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *AllUsers) Reset() {
-	*x = AllUsers{}
+func (x *Users) Reset() {
+	*x = Users{}
 	mi := &file_proto_auth_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *AllUsers) String() string {
+func (x *Users) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AllUsers) ProtoMessage() {}
+func (*Users) ProtoMessage() {}
 
-func (x *AllUsers) ProtoReflect() protoreflect.Message {
+func (x *Users) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_auth_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -54,19 +54,19 @@ func (x *AllUsers) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AllUsers.ProtoReflect.Descriptor instead.
-func (*AllUsers) Descriptor() ([]byte, []int) {
+// Deprecated: Use Users.ProtoReflect.Descriptor instead.
+func (*Users) Descriptor() ([]byte, []int) {
 	return file_proto_auth_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AllUsers) GetUsers() []*GetUser {
+func (x *Users) GetUsers() []*User {
 	if x != nil {
 		return x.Users
 	}
 	return nil
 }
 
-type GetUser struct {
+type User struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -75,20 +75,20 @@ type GetUser struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetUser) Reset() {
-	*x = GetUser{}
+func (x *User) Reset() {
+	*x = User{}
 	mi := &file_proto_auth_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetUser) String() string {
+func (x *User) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetUser) ProtoMessage() {}
+func (*User) ProtoMessage() {}
 
-func (x *GetUser) ProtoReflect() protoreflect.Message {
+func (x *User) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_auth_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -100,26 +100,26 @@ func (x *GetUser) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetUser.ProtoReflect.Descriptor instead.
-func (*GetUser) Descriptor() ([]byte, []int) {
+// Deprecated: Use User.ProtoReflect.Descriptor instead.
+func (*User) Descriptor() ([]byte, []int) {
 	return file_proto_auth_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetUser) GetId() string {
+func (x *User) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *GetUser) GetName() string {
+func (x *User) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *GetUser) GetLastname() string {
+func (x *User) GetLastname() string {
 	if x != nil {
 		return x.Lastname
 	}
@@ -718,10 +718,11 @@ var File_proto_auth_proto protoreflect.FileDescriptor
 
 const file_proto_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x10proto/auth.proto\x12\x04auth\x1a\x1bgoogle/protobuf/empty.proto\"/\n" +
-	"\bAllUsers\x12#\n" +
-	"\x05users\x18\x01 \x03(\v2\r.auth.GetUserR\x05users\"I\n" +
-	"\aGetUser\x12\x0e\n" +
+	"\x10proto/auth.proto\x12\x04auth\x1a\x1bgoogle/protobuf/empty.proto\")\n" +
+	"\x05Users\x12 \n" +
+	"\x05users\x18\x01 \x03(\v2\n" +
+	".auth.UserR\x05users\"F\n" +
+	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
 	"\blastname\x18\x03 \x01(\tR\blastname\"|\n" +
@@ -759,7 +760,7 @@ const file_proto_auth_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token\"?\n" +
 	"\x10ValidateResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
-	"\x04role\x18\x02 \x01(\tR\x04role2\xdb\x03\n" +
+	"\x04role\x18\x02 \x01(\tR\x04role2\xd8\x03\n" +
 	"\vAuthService\x129\n" +
 	"\bRegister\x12\x15.auth.RegisterRequest\x1a\x16.auth.RegisterResponse\x12/\n" +
 	"\x05Login\x12\x12.auth.LoginRequest\x1a\x12.auth.AuthResponse\x123\n" +
@@ -767,8 +768,8 @@ const file_proto_auth_proto_rawDesc = "" +
 	"\bValidate\x12\x15.auth.ValidateRequest\x1a\x16.auth.ValidateResponse\x12C\n" +
 	"\rDeleteAccount\x12\x1a.auth.DeleteAccountRequest\x1a\x16.google.protobuf.Empty\x12?\n" +
 	"\rResetPassword\x12\x1a.auth.ResetPasswordRequest\x1a\x12.auth.AuthResponse\x123\n" +
-	"\aRefresh\x12\x14.auth.RefreshRequest\x1a\x12.auth.AuthResponse\x125\n" +
-	"\vGetAllUsers\x12\x16.google.protobuf.Empty\x1a\x0e.auth.AllUsersBLZJgithub.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen;pbb\x06proto3"
+	"\aRefresh\x12\x14.auth.RefreshRequest\x1a\x12.auth.AuthResponse\x122\n" +
+	"\vGetAllUsers\x12\x16.google.protobuf.Empty\x1a\v.auth.UsersBLZJgithub.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen;pbb\x06proto3"
 
 var (
 	file_proto_auth_proto_rawDescOnce sync.Once
@@ -784,8 +785,8 @@ func file_proto_auth_proto_rawDescGZIP() []byte {
 
 var file_proto_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_proto_auth_proto_goTypes = []any{
-	(*AllUsers)(nil),             // 0: auth.AllUsers
-	(*GetUser)(nil),              // 1: auth.GetUser
+	(*Users)(nil),                // 0: auth.Users
+	(*User)(nil),                 // 1: auth.User
 	(*RegisterResponse)(nil),     // 2: auth.RegisterResponse
 	(*LogoutResponse)(nil),       // 3: auth.LogoutResponse
 	(*LogoutRequest)(nil),        // 4: auth.LogoutRequest
@@ -800,7 +801,7 @@ var file_proto_auth_proto_goTypes = []any{
 	(*emptypb.Empty)(nil),        // 13: google.protobuf.Empty
 }
 var file_proto_auth_proto_depIdxs = []int32{
-	1,  // 0: auth.AllUsers.users:type_name -> auth.GetUser
+	1,  // 0: auth.Users.users:type_name -> auth.User
 	8,  // 1: auth.AuthService.Register:input_type -> auth.RegisterRequest
 	9,  // 2: auth.AuthService.Login:input_type -> auth.LoginRequest
 	4,  // 3: auth.AuthService.Logout:input_type -> auth.LogoutRequest
@@ -816,7 +817,7 @@ var file_proto_auth_proto_depIdxs = []int32{
 	13, // 13: auth.AuthService.DeleteAccount:output_type -> google.protobuf.Empty
 	10, // 14: auth.AuthService.ResetPassword:output_type -> auth.AuthResponse
 	10, // 15: auth.AuthService.Refresh:output_type -> auth.AuthResponse
-	0,  // 16: auth.AuthService.GetAllUsers:output_type -> auth.AllUsers
+	0,  // 16: auth.AuthService.GetAllUsers:output_type -> auth.Users
 	9,  // [9:17] is the sub-list for method output_type
 	1,  // [1:9] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
