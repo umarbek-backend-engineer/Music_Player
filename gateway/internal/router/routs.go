@@ -40,12 +40,12 @@ func Route() *gin.Engine {
 	// public
 	r.POST("/register", handler.Register) // working
 	r.POST("/login", handler.LogIn)       // working
+	r.POST("/refresh", handler.Refresh)   // working
 
 	// protected
 	authGroup.POST("/logout", handler.LogOut)                 // working
 	authGroup.POST("/resetpassword", handler.ResetPassword)   // working
 	authGroup.DELETE("/deleteaccount", handler.DeleteAccount) // working
-	authGroup.POST("/refresh", handler.Refresh)               // working
 
 	// music
 	authGroup.POST("/my_music", handler.Upload)                      // working
@@ -58,7 +58,7 @@ func Route() *gin.Engine {
 
 	// social
 	authGroup.GET("/users", handler.GetUsers)                      // get the existing user ID
-	authGroup.GET("/user/:user_id/musics", handler.GetPublicMusic) // get all public music of that user
+	authGroup.GET("/user/:user_id/music", handler.GetPublicMusic) // get all public music of that user
 
 	return r
 }

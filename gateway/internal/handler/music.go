@@ -231,7 +231,7 @@ func StreamMusic(c *gin.Context) {
 	var filename string
 
 	// extract music_id from parametr
-	music_id := c.Param("id")
+	music_id := c.Param("music_id")
 
 	// get the request context with timeout of 10 seconds
 	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
@@ -290,7 +290,7 @@ func GetPublicMusic(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
 	defer cancel()
 
-	id := c.Param("music_id")
+	id := c.Param("user_id")
 
 	// pass id with metadata
 	MD := metadata.Pairs(

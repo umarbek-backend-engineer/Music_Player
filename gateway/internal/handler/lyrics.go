@@ -74,7 +74,7 @@ func GetLyrics(c *gin.Context) {
 	defer cancel()
 
 	// getting the parametr of the id
-	idStr := c.Param("id")
+	idStr := c.Param("music_id")
 
 	// connect to grpc lyrics service
 	resp, err := grpc_init.LyricsClient.GetLyrics(ctx, &pb.GetLyricsRequest{
