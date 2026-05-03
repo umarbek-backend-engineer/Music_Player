@@ -11,6 +11,7 @@ import (
 	"github.com/umarbek-backend-engineer/Music_Player/gateway/internal/grpc_init"
 	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func Register(c *gin.Context) {
@@ -215,4 +216,42 @@ func Refresh(c *gin.Context) {
 	c.ShouldBind(gin.H{
 		"message": "Success",
 	})
+}
+
+// get users from database
+func GetUsers(c *gin.Context) {
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	// get the user id from context
+	id, exists := c.Get("user_id")
+	if !exists {
+		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing id in context"))
+		return
+	}
+
+	idStr, ok := id.(string)
+	if !ok {
+		utils.Error(c, "Error in converting id type any to idStr string", http.StatusInternalServerError, errors.New("Internal Server Error"))
+		return
+	}
+
+	// pass id with metadata
+	MD := metadata.Pairs(
+		"user-id", idStr,
+	)
+
+	// rewrite the context
+	ctx = metadata.NewOutgoingContext(ctx, MD)
+
+	// connect to auth-service
+	users, err := grpc_init.AuthClient.GetAllUsers(ctx, &emptypb.Empty{})
+	if err != nil {
+		utils.Error(c, "Internal Error in auth-service", http.StatusBadGateway, err)
+		return
+	}
+
+	// return the response
+	c.JSON(200, users)
 }

@@ -4,19 +4,16 @@ import (
 	"bytes"
 	"context"
 	"errors"
-
-	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/protobuf/types/known/emptypb"
-
-	grpc_init "github.com/umarbek-backend-engineer/Music_Player/gateway/internal/grpc_init"
-
 	"io"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	pb "github.com/umarbek-backend-engineer/Music_Player/gateway/github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen"
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/internal/grpc_init"
+	"github.com/umarbek-backend-engineer/Music_Player/gateway/pkg/utils"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 // func UploadHandler(c *gin.Context, rb *modules.Rabbit) {
@@ -172,7 +169,7 @@ func Upload(c *gin.Context) {
 
 		//send  the file only once
 		if firstChunk {
-			chunk.Filename = fileheader.Filename
+			chunk.Title = fileheader.Filename
 			firstChunk = false
 		}
 
@@ -240,28 +237,7 @@ func StreamMusic(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
 	defer cancel()
 
-	// get the user id from context
-	id, exists := c.Get("user_id")
-	if !exists {
-		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing id in context"))
-		return
-	}
-
-	// type convertion
-	idStr, ok := id.(string)
-	if !ok {
-		utils.Error(c, "Error in converting id type any to idStr string", http.StatusInternalServerError, errors.New("Internal Server Error"))
-		return
-	}
-
-	// pass id with metadata
-	MD := metadata.Pairs(
-		"user-id", idStr,
-	)
-
-	// rewrite the context
-	ctx = metadata.NewOutgoingContext(ctx, MD)
-
+	// send  the request to the stream Music
 	stream, err := grpc_init.MusicClient.StreamMusic(ctx, &pb.StreamRequest{Id: music_id})
 	if err != nil {
 		utils.Error(c, "Failed to get stream of music", http.StatusInternalServerError, err)
@@ -286,7 +262,7 @@ func StreamMusic(c *gin.Context) {
 			return
 		}
 
-		filename = chunk.Name
+		filename = chunk.Title
 
 		// // push the chunk of bytes to the browser
 		// _, err = c.Writer.Write(chunk.Content)

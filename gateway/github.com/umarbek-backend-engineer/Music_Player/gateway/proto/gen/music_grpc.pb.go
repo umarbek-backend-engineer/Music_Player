@@ -20,9 +20,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MusicService_ListMusic_FullMethodName   = "/music.MusicService/ListMusic"
-	MusicService_UploadMusic_FullMethodName = "/music.MusicService/UploadMusic"
-	MusicService_StreamMusic_FullMethodName = "/music.MusicService/StreamMusic"
+	MusicService_ListMusic_FullMethodName       = "/music.MusicService/ListMusic"
+	MusicService_UploadMusic_FullMethodName     = "/music.MusicService/UploadMusic"
+	MusicService_StreamMusic_FullMethodName     = "/music.MusicService/StreamMusic"
+	MusicService_MakeMusicPublic_FullMethodName = "/music.MusicService/MakeMusicPublic"
 )
 
 // MusicServiceClient is the client API for MusicService service.
@@ -32,6 +33,7 @@ type MusicServiceClient interface {
 	ListMusic(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListResponse, error)
 	UploadMusic(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[UploadMusicChunks, UploadMusicResponse], error)
 	StreamMusic(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[MusicChunk], error)
+	MakeMusicPublic(ctx context.Context, in *MakePublicRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type musicServiceClient struct {
@@ -84,6 +86,16 @@ func (c *musicServiceClient) StreamMusic(ctx context.Context, in *StreamRequest,
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type MusicService_StreamMusicClient = grpc.ServerStreamingClient[MusicChunk]
 
+func (c *musicServiceClient) MakeMusicPublic(ctx context.Context, in *MakePublicRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, MusicService_MakeMusicPublic_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MusicServiceServer is the server API for MusicService service.
 // All implementations must embed UnimplementedMusicServiceServer
 // for forward compatibility.
@@ -91,6 +103,7 @@ type MusicServiceServer interface {
 	ListMusic(context.Context, *emptypb.Empty) (*ListResponse, error)
 	UploadMusic(grpc.ClientStreamingServer[UploadMusicChunks, UploadMusicResponse]) error
 	StreamMusic(*StreamRequest, grpc.ServerStreamingServer[MusicChunk]) error
+	MakeMusicPublic(context.Context, *MakePublicRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedMusicServiceServer()
 }
 
@@ -109,6 +122,9 @@ func (UnimplementedMusicServiceServer) UploadMusic(grpc.ClientStreamingServer[Up
 }
 func (UnimplementedMusicServiceServer) StreamMusic(*StreamRequest, grpc.ServerStreamingServer[MusicChunk]) error {
 	return status.Error(codes.Unimplemented, "method StreamMusic not implemented")
+}
+func (UnimplementedMusicServiceServer) MakeMusicPublic(context.Context, *MakePublicRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method MakeMusicPublic not implemented")
 }
 func (UnimplementedMusicServiceServer) mustEmbedUnimplementedMusicServiceServer() {}
 func (UnimplementedMusicServiceServer) testEmbeddedByValue()                      {}
@@ -167,6 +183,24 @@ func _MusicService_StreamMusic_Handler(srv interface{}, stream grpc.ServerStream
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type MusicService_StreamMusicServer = grpc.ServerStreamingServer[MusicChunk]
 
+func _MusicService_MakeMusicPublic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MakePublicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MusicServiceServer).MakeMusicPublic(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MusicService_MakeMusicPublic_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MusicServiceServer).MakeMusicPublic(ctx, req.(*MakePublicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MusicService_ServiceDesc is the grpc.ServiceDesc for MusicService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +211,10 @@ var MusicService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMusic",
 			Handler:    _MusicService_ListMusic_Handler,
+		},
+		{
+			MethodName: "MakeMusicPublic",
+			Handler:    _MusicService_MakeMusicPublic_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

@@ -4,10 +4,10 @@ package music;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/umarbek-backend-engineer/Music_Player/music-service/proto/gen;pb";
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen;pb";
 
 service MusicService {
-    rpc ListMusic(Empty) returns (ListResponse);
+    rpc ListMusic(google.protobuf.Empty) returns (ListResponse);
     rpc UploadMusic(stream UploadMusicChunks) returns (UploadMusicResponse);
     rpc StreamMusic(StreamRequest) returns (stream MusicChunk);
 
@@ -26,8 +26,6 @@ message UploadMusicChunks {
     string title = 1;
     bytes data = 2;
 }
-
-message Empty {}
 
 message MusicItem {
     string id = 1;

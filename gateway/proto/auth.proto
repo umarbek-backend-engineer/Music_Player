@@ -4,7 +4,7 @@ package auth;
 
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/umarbek-backend-engineer/Music_Player/auth-service/proto/gen;pb";
+option go_package = "github.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen;pb";
 
 service AuthService {
     rpc Register(RegisterRequest) returns (RegisterResponse);
@@ -13,7 +13,20 @@ service AuthService {
     rpc Validate(ValidateRequest) returns (ValidateResponse);
     rpc DeleteAccount(DeleteAccountRequest) returns (google.protobuf.Empty);
     rpc ResetPassword(ResetPasswordRequest) returns (AuthResponse);
+
     rpc Refresh(RefreshRequest) returns (AuthResponse);
+
+    rpc GetAllUsers(google.protobuf.Empty) returns (Users);
+}
+
+message Users {
+    repeated User users = 1;
+}
+
+message User {
+    string id = 1;
+    string name = 2;
+    string lastname =3;
 }
 
 message  RegisterResponse {

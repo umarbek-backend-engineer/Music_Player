@@ -48,13 +48,17 @@ func Route() *gin.Engine {
 	authGroup.POST("/refresh", handler.Refresh)               // working
 
 	// music
-	authGroup.POST("/my_music", handler.Upload)         // working
-	authGroup.GET("/my_music", handler.ListMusic)       // working
-	authGroup.GET("/my_music/:id", handler.StreamMusic) // working
+	authGroup.POST("/my_music", handler.Upload)                      // working
+	authGroup.GET("/my_music", handler.ListMusic)                    // working
+	authGroup.GET("/my_music/stream/:music_id", handler.StreamMusic) // working
 
 	// lyrics
-	authGroup.POST("/lyrics", handler.AddLyrics)
-	authGroup.GET("/lyrics/:id", handler.GetLyrics)
+	authGroup.POST("/lyrics", handler.AddLyrics)          // working
+	authGroup.GET("/lyrics/:music_id", handler.GetLyrics) // working
+
+	// social
+	authGroup.GET("/users", handler.GetUsers) // get the existing user ID
+	authGroup.GET("/user/:user_id/musics")    // get all public music of that user
 
 	return r
 }
