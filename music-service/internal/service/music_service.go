@@ -191,3 +191,38 @@ func (s *Server) GetPublicMusic(ctx context.Context, req *emptypb.Empty) (*pb.Pu
 	// return response
 	return music, nil
 }
+
+// make music private or public
+func (s *Server) ChangeVisible(ctx context.Context, req *pb.ChangeVisibleRequest) (*emptypb.Empty, error) {
+
+	// get the header information (user_id and music_id)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, utils.MapErrors(fmt.Errorf("Failed to get incoming request"))
+	}
+
+	// initialize variable
+	user_id := ""
+	music_id := ""
+
+	if v := md.Get("user-id"); len(v) > 0 {
+		user_id = v[0]
+	}
+	if v := md.Get("music-id"); len(v) > 0 {
+		music_id = v[0]
+	}
+
+	// check if metadata has been sent. if no return error
+	if user_id == "" && music_id == "" {
+		return nil, utils.MapErrors(errors.ErrUnsupported)
+	}
+
+	// create database client
+	err := repository.MakeMusicVisibalCrudHandler(ctx, req.IsPublic, user_id, music_id)
+	if err != nil {
+		return nil, utils.MapErrors(err)
+	}
+
+	// return the response if everything is ok
+	return &emptypb.Empty{}, nil
+}

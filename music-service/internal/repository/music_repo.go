@@ -20,7 +20,7 @@ func UploadMusicDBHandler(ctx context.Context, user_id, title, filepath string) 
 	defer conn.Close(ctx)
 
 	// store the meta information inside the db
-	msgTag, err := conn.Exec(ctx, "insert into music (user_id, title, filepath) values ($1, $2, $3)", user_id, title, filepath)
+	msgTag, err := conn.Exec(ctx, "insert into music (user_id, title, filepath) values ($1, $2, $3) on conflict (filepath) do nothing", user_id, title, filepath)
 	if err != nil {
 		return err
 	}
@@ -104,4 +104,20 @@ func GetPublicCrudHandler(ctx context.Context, user_id string) (*pb.PublicMusicR
 		music.Music = append(music.Music, &single_music)
 	}
 	return music, nil
+}
+
+func MakeMusicVisibalCrudHandler(ctx context.Context, is_public bool, user_id, music_id string) error {
+	conn, err := db_connect.Connect()
+	if err != nil {
+		return err
+	}
+	defer conn.Close(ctx)
+
+	// give the command to database
+	_, err = conn.Exec(ctx, "update music set is_public = $1 where user_id = $2 and id = $3", is_public, user_id, music_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

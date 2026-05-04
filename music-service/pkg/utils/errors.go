@@ -12,11 +12,13 @@ var (
 	ErrInvalidFile = errors.New("Invalid file")
 	ErrFileTooLarg = errors.New("File too big")
 	ErrNotFound    = errors.New("File not found")
+	ErrMetaData    = errors.New("Invalid MetaData")
 )
 
 var mapError = map[error]codes.Code{
 	ErrInvalidFile: codes.InvalidArgument,
 	ErrFileTooLarg: codes.InvalidArgument,
+	ErrMetaData:    codes.InvalidArgument,
 	ErrNotFound:    codes.NotFound,
 }
 
