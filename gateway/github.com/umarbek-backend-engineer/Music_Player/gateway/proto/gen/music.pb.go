@@ -22,6 +22,50 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ChangeVisibleRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	IsPublic      bool                   `protobuf:"varint,1,opt,name=is_public,json=isPublic,proto3" json:"is_public,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ChangeVisibleRequest) Reset() {
+	*x = ChangeVisibleRequest{}
+	mi := &file_proto_music_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ChangeVisibleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeVisibleRequest) ProtoMessage() {}
+
+func (x *ChangeVisibleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_music_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeVisibleRequest.ProtoReflect.Descriptor instead.
+func (*ChangeVisibleRequest) Descriptor() ([]byte, []int) {
+	return file_proto_music_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ChangeVisibleRequest) GetIsPublic() bool {
+	if x != nil {
+		return x.IsPublic
+	}
+	return false
+}
+
 type PublicMusicResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Music         []*PublicMusic         `protobuf:"bytes,1,rep,name=music,proto3" json:"music,omitempty"`
@@ -31,7 +75,7 @@ type PublicMusicResponse struct {
 
 func (x *PublicMusicResponse) Reset() {
 	*x = PublicMusicResponse{}
-	mi := &file_proto_music_proto_msgTypes[0]
+	mi := &file_proto_music_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +87,7 @@ func (x *PublicMusicResponse) String() string {
 func (*PublicMusicResponse) ProtoMessage() {}
 
 func (x *PublicMusicResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_music_proto_msgTypes[0]
+	mi := &file_proto_music_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +100,7 @@ func (x *PublicMusicResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublicMusicResponse.ProtoReflect.Descriptor instead.
 func (*PublicMusicResponse) Descriptor() ([]byte, []int) {
-	return file_proto_music_proto_rawDescGZIP(), []int{0}
+	return file_proto_music_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *PublicMusicResponse) GetMusic() []*PublicMusic {
@@ -78,7 +122,7 @@ type PublicMusic struct {
 
 func (x *PublicMusic) Reset() {
 	*x = PublicMusic{}
-	mi := &file_proto_music_proto_msgTypes[1]
+	mi := &file_proto_music_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -90,7 +134,7 @@ func (x *PublicMusic) String() string {
 func (*PublicMusic) ProtoMessage() {}
 
 func (x *PublicMusic) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_music_proto_msgTypes[1]
+	mi := &file_proto_music_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -103,7 +147,7 @@ func (x *PublicMusic) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PublicMusic.ProtoReflect.Descriptor instead.
 func (*PublicMusic) Descriptor() ([]byte, []int) {
-	return file_proto_music_proto_rawDescGZIP(), []int{1}
+	return file_proto_music_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *PublicMusic) GetMusicId() string {
@@ -132,50 +176,6 @@ func (x *PublicMusic) GetIsPublic() bool {
 		return x.IsPublic
 	}
 	return false
-}
-
-type MakePrivateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	MusicId       string                 `protobuf:"bytes,1,opt,name=music_id,json=musicId,proto3" json:"music_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *MakePrivateRequest) Reset() {
-	*x = MakePrivateRequest{}
-	mi := &file_proto_music_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *MakePrivateRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*MakePrivateRequest) ProtoMessage() {}
-
-func (x *MakePrivateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_music_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use MakePrivateRequest.ProtoReflect.Descriptor instead.
-func (*MakePrivateRequest) Descriptor() ([]byte, []int) {
-	return file_proto_music_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *MakePrivateRequest) GetMusicId() string {
-	if x != nil {
-		return x.MusicId
-	}
-	return ""
 }
 
 type UploadMusicResponse struct {
@@ -470,16 +470,16 @@ var File_proto_music_proto protoreflect.FileDescriptor
 
 const file_proto_music_proto_rawDesc = "" +
 	"\n" +
-	"\x11proto/music.proto\x12\x05music\x1a\x1bgoogle/protobuf/empty.proto\"?\n" +
+	"\x11proto/music.proto\x12\x05music\x1a\x1bgoogle/protobuf/empty.proto\"3\n" +
+	"\x14ChangeVisibleRequest\x12\x1b\n" +
+	"\tis_public\x18\x01 \x01(\bR\bisPublic\"?\n" +
 	"\x13PublicMusicResponse\x12(\n" +
 	"\x05music\x18\x01 \x03(\v2\x12.music.PublicMusicR\x05music\"t\n" +
 	"\vPublicMusic\x12\x19\n" +
 	"\bmusic_id\x18\x01 \x01(\tR\amusicId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12\x1b\n" +
-	"\tis_public\x18\x04 \x01(\bR\bisPublic\"/\n" +
-	"\x12MakePrivateRequest\x12\x19\n" +
-	"\bmusic_id\x18\x01 \x01(\tR\amusicId\"-\n" +
+	"\tis_public\x18\x04 \x01(\bR\bisPublic\"-\n" +
 	"\x13UploadMusicResponse\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\tR\x06status\"=\n" +
 	"\x11UploadMusicChunks\x12\x14\n" +
@@ -495,13 +495,13 @@ const file_proto_music_proto_rawDesc = "" +
 	"\n" +
 	"MusicChunk\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
-	"\acontent\x18\x02 \x01(\fR\acontent2\xd6\x02\n" +
+	"\acontent\x18\x02 \x01(\fR\acontent2\xd5\x02\n" +
 	"\fMusicService\x128\n" +
 	"\tListMusic\x12\x16.google.protobuf.Empty\x1a\x13.music.ListResponse\x12E\n" +
 	"\vUploadMusic\x12\x18.music.UploadMusicChunks\x1a\x1a.music.UploadMusicResponse(\x01\x128\n" +
-	"\vStreamMusic\x12\x14.music.StreamRequest\x1a\x11.music.MusicChunk0\x01\x12E\n" +
-	"\x10MakeMusicPrivate\x12\x19.music.MakePrivateRequest\x1a\x16.google.protobuf.Empty\x12D\n" +
-	"\x0eGetPublicMusic\x12\x16.google.protobuf.Empty\x1a\x1a.music.PublicMusicResponseBGZEgithub.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen;pbb\x06proto3"
+	"\vStreamMusic\x12\x14.music.StreamRequest\x1a\x11.music.MusicChunk0\x01\x12D\n" +
+	"\x0eGetPublicMusic\x12\x16.google.protobuf.Empty\x1a\x1a.music.PublicMusicResponse\x12D\n" +
+	"\rChangeVisible\x12\x1b.music.ChangeVisibleRequest\x1a\x16.google.protobuf.EmptyBGZEgithub.com/umarbek-backend-engineer/Music_Player/gateway/proto/gen;pbb\x06proto3"
 
 var (
 	file_proto_music_proto_rawDescOnce sync.Once
@@ -517,30 +517,30 @@ func file_proto_music_proto_rawDescGZIP() []byte {
 
 var file_proto_music_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_proto_music_proto_goTypes = []any{
-	(*PublicMusicResponse)(nil), // 0: music.PublicMusicResponse
-	(*PublicMusic)(nil),         // 1: music.PublicMusic
-	(*MakePrivateRequest)(nil),  // 2: music.MakePrivateRequest
-	(*UploadMusicResponse)(nil), // 3: music.UploadMusicResponse
-	(*UploadMusicChunks)(nil),   // 4: music.UploadMusicChunks
-	(*MusicItem)(nil),           // 5: music.MusicItem
-	(*ListResponse)(nil),        // 6: music.ListResponse
-	(*StreamRequest)(nil),       // 7: music.StreamRequest
-	(*MusicChunk)(nil),          // 8: music.MusicChunk
-	(*emptypb.Empty)(nil),       // 9: google.protobuf.Empty
+	(*ChangeVisibleRequest)(nil), // 0: music.ChangeVisibleRequest
+	(*PublicMusicResponse)(nil),  // 1: music.PublicMusicResponse
+	(*PublicMusic)(nil),          // 2: music.PublicMusic
+	(*UploadMusicResponse)(nil),  // 3: music.UploadMusicResponse
+	(*UploadMusicChunks)(nil),    // 4: music.UploadMusicChunks
+	(*MusicItem)(nil),            // 5: music.MusicItem
+	(*ListResponse)(nil),         // 6: music.ListResponse
+	(*StreamRequest)(nil),        // 7: music.StreamRequest
+	(*MusicChunk)(nil),           // 8: music.MusicChunk
+	(*emptypb.Empty)(nil),        // 9: google.protobuf.Empty
 }
 var file_proto_music_proto_depIdxs = []int32{
-	1, // 0: music.PublicMusicResponse.music:type_name -> music.PublicMusic
+	2, // 0: music.PublicMusicResponse.music:type_name -> music.PublicMusic
 	5, // 1: music.ListResponse.songs:type_name -> music.MusicItem
 	9, // 2: music.MusicService.ListMusic:input_type -> google.protobuf.Empty
 	4, // 3: music.MusicService.UploadMusic:input_type -> music.UploadMusicChunks
 	7, // 4: music.MusicService.StreamMusic:input_type -> music.StreamRequest
-	2, // 5: music.MusicService.MakeMusicPrivate:input_type -> music.MakePrivateRequest
-	9, // 6: music.MusicService.GetPublicMusic:input_type -> google.protobuf.Empty
+	9, // 5: music.MusicService.GetPublicMusic:input_type -> google.protobuf.Empty
+	0, // 6: music.MusicService.ChangeVisible:input_type -> music.ChangeVisibleRequest
 	6, // 7: music.MusicService.ListMusic:output_type -> music.ListResponse
 	3, // 8: music.MusicService.UploadMusic:output_type -> music.UploadMusicResponse
 	8, // 9: music.MusicService.StreamMusic:output_type -> music.MusicChunk
-	9, // 10: music.MusicService.MakeMusicPrivate:output_type -> google.protobuf.Empty
-	0, // 11: music.MusicService.GetPublicMusic:output_type -> music.PublicMusicResponse
+	1, // 10: music.MusicService.GetPublicMusic:output_type -> music.PublicMusicResponse
+	9, // 11: music.MusicService.ChangeVisible:output_type -> google.protobuf.Empty
 	7, // [7:12] is the sub-list for method output_type
 	2, // [2:7] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

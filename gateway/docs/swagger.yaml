@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:9090
+info:
+  contact: {}
+  description: API for your music app
+  title: Music API Gateway
+  version: "1.0"
+paths: {}
+swagger: "2.0"

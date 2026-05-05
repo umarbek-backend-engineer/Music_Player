@@ -309,3 +309,51 @@ func GetPublicMusic(c *gin.Context) {
 
 	c.JSON(200, music)
 }
+
+func ChangeVisibilaty(c *gin.Context) {
+	// get the request context with timeout of 10 seconds
+	ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second*10)
+	defer cancel()
+
+	// get the user id from context
+	user_id, exists := c.Get("user_id")
+	if !exists {
+		utils.Error(c, "Missing Id", http.StatusUnauthorized, errors.New("Missing user_id in context"))
+		return
+	}
+
+	user_idStr, ok := user_id.(string)
+	if !ok {
+		utils.Error(c, "Error in converting user_id type any to user_idStr string", http.StatusInternalServerError, errors.New("Internal Server Error"))
+		return
+	}
+
+	// now  get music_id from param
+	music_id := c.Param("music_id")
+
+	// pass id with metadata
+	MD := metadata.Pairs(
+		"user-id", user_idStr,
+		"music-id", music_id,
+	)
+
+	// rewrite the context
+	ctx = metadata.NewOutgoingContext(ctx, MD)
+
+	// get the request from body
+	var is_public *pb.ChangeVisibleRequest
+	err := c.BindJSON(&is_public)
+	if err != nil {
+		utils.Error(c, "Failed to recieve body request", http.StatusInternalServerError, err)
+		return
+	}
+
+	// pass the request to music-service
+	_, err = grpc_init.MusicClient.ChangeVisible(ctx, is_public)
+	if err != nil {
+		utils.Error(c, "Internal Error: Failed request in Music service", http.StatusBadGateway, err)
+		return
+	}
+
+	c.ShouldBind("Success")
+}

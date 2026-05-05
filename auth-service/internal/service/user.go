@@ -66,7 +66,7 @@ func (s *Server) Login(ctx context.Context, req *pb.LoginRequest) (*pb.AuthRespo
 
 	// check if metadata has been sent. if no return error
 	if user_agent == "" && ip_address == "" {
-		return nil, utils.ErrMetaData
+		return nil, utils.MapErrors(utils.ErrMetaData)
 	}
 	// get id, role, saved password where email matches from database
 	id, role, dbpassword, err := repository.LogInCrud(ctx, req.Email)
@@ -294,7 +294,7 @@ func (s *Server) ResetPassword(ctx context.Context, req *pb.ResetPasswordRequest
 	}, nil
 }
 
-func GetAllUsers(ctx context.Context, req *emptypb.Empty) (*pb.Users, error) {
+func (s *Server) GetAllUsers(ctx context.Context, req *emptypb.Empty) (*pb.Users, error) {
 
 	// get requester user-id
 	md, exists := metadata.FromIncomingContext(ctx)
