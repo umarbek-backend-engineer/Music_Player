@@ -2,7 +2,7 @@
 
 An AI-powered music streaming platform built as a microservice system. Upload tracks, stream them in the browser, and get **AI-generated timestamped lyrics** via OpenAI Whisper — all wired together with gRPC, Go, Python, and Docker.
 
----
+---   
 
 ## ✨ Features
 
