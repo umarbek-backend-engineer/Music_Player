@@ -5,7 +5,7 @@ An AI-powered music streaming platform built as a microservice system. Upload tr
 ---   
 
 ## ✨ Features
-- **Authentication/Authorization** - secure JWT-based authentication with access and refresh tokens, protected routes, and middleware authorization
+- **Authentication/Authorization** - secure JWT-based authentication with access and refresh tokens, protected routes, and authorization middleware
 - **Upload music** — stream audio files directly to storage via chunked gRPC streaming
 - **Stream music** — browser-compatible audio streaming with `Range` request support (seek / scrub)
 - **AI Lyrics** — automatic lyric transcription using OpenAI Whisper (`medium` model), stored with per-segment timestamps
